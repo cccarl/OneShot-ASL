@@ -43,7 +43,7 @@ init{
             MD5Hash = md5.ComputeHash(s).Select(x => x.ToString("X2")).Aggregate((a, b) => a + b);
 
     switch (MD5Hash){
-        case "9980F8856EA81CF5046DBA1B5437B8B": version = "Standalone"; break;
+        case "9980F8856EA81CF5046DBA1B5437B8BD": version = "Standalone"; break;
         case "5379925D4B6750CD3036FF273C6BDFB4": version = "Steam"; break;
         default: version = "Unknown"; break;
     }
