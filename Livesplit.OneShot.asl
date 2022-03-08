@@ -5,7 +5,7 @@ state("OneShot", "Standalone"){
     int framesGameOpen : "oneshot.exe", 0x236D4C, 0x8, 0x1C, 0x1C8;
 }
 
-state("OneShot", "Steam"){
+state("OneShot", "Steam 32-bit"){
     int framesGameOpen : "oneshot.exe", 0x23384C, 0x8, 0x1C, 0x1C8;
 }
 
