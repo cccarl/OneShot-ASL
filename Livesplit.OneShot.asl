@@ -15,6 +15,14 @@ startup{
 }
 
 init{
+    
+    // fix for odd issue where livesplit seems to hook a wrong or broken oneshot process, init{} will be rerun
+    if (modules.First().ModuleMemorySize < 0x200000) {
+        //print("ASL: Reloading script, wrong ModuleMemorySize detected");
+        Thread.Sleep(50);
+        throw new Exception();
+    }
+
     if (timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase.ToString() == "NotRunning"){
         var message = MessageBox.Show(
             "LiveSplit has a load remover for this game available when comparing against Game Time. Would you like to change the current timing method to Game Time instead of Real Time?", 
@@ -25,16 +33,10 @@ init{
         }
     }
 
-    // MD5 code by CptBrian.
-    string MD5Hash;
-    using (var md5 = System.Security.Cryptography.MD5.Create())
-        using (var s = File.Open(modules.First().FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            MD5Hash = md5.ComputeHash(s).Select(x => x.ToString("X2")).Aggregate((a, b) => a + b);
-
-    switch (MD5Hash){
-        case "9980F8856EA81CF5046DBA1B5437B8BD": version = "Standalone"; break;
-        case "5379925D4B6750CD3036FF273C6BDFB4": version = "Steam"; break;
-        default: version = "Not Supported"; break;
+    switch (modules.First().ModuleMemorySize) {
+        case 0x271000: version = "Steam 32-bit"; break;
+        case 0x275000: version = "Standalone"; break;
+        default: version = "Not Suported"; break;
     }
 
 }
