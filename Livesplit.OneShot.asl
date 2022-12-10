@@ -1,86 +1,93 @@
 // pointer path by doesthisusername
-// script by SunglassesEmoji
+// script by SunglassesEmoji & NERS
 
 state("OneShot", "Steam 64-bit IGT"){
-    int framesGameOpen : "oneshot.exe", 0x45E6D0, 0x10, 0x10, 0x1EC;
+    int igtFrames : "oneshot.exe", 0x45E6D0, 0x10, 0x10, 0x1EC;
 }
 
 state("OneShot", "Standalone"){
-    int framesGameOpen : "oneshot.exe", 0x236D4C, 0x8, 0x1C, 0x1C8;
+    int igtFrames : "oneshot.exe", 0x236D4C, 0x8, 0x1C, 0x1C8;
 }
 
 state("OneShot", "Steam 32-bit"){
-    int framesGameOpen : "oneshot.exe", 0x23384C, 0x8, 0x1C, 0x1C8;
+    int igtFrames : "oneshot.exe", 0x23384C, 0x8, 0x1C, 0x1C8;
 }
 
 startup{
     settings.Add("game_time_set", true, "Ask if Game Time should be used when opening the game");
     settings.SetToolTip("game_time_set", "This won't be asked if Game Time is already being used or if the timer is running.");
     settings.Add("use_igt", true, "Use IGT instead of the LiveSplit load remover");
+
+    vars.inSolstice = false;
+    vars.tempFrames = TimeSpan.FromSeconds(0);
 }
 
 init{
-    
     // fix for odd issue where livesplit seems to hook a wrong or broken oneshot process, init{} will be rerun
     if (modules.First().ModuleMemorySize < 0x200000) {
-        //print("ASL: Reloading script, wrong ModuleMemorySize detected");
+        print("ASL: Reloading script, wrong ModuleMemorySize detected");
         Thread.Sleep(50);
         throw new Exception();
     }
 
-    if (timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase.ToString() == "NotRunning"){
-        var message = MessageBox.Show(
+    if (timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase == TimerPhase.NotRunning) {
+        var message = MessageBox.Show
+        (
             "LiveSplit uses Game Time or a Load Remover for this game. Would you like to change the current timing method to Game Time instead of Real Time?",
-            "LiveSplit | OneShot Load Remover", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            "LiveSplit | OneShot Load Remover", MessageBoxButtons.YesNo, MessageBoxIcon.Question
+        );
 
-        if (message == DialogResult.Yes){
+        if (message == DialogResult.Yes) {
             timer.CurrentTimingMethod = TimingMethod.GameTime;
         }
     }
 
     switch (modules.First().ModuleMemorySize) {
         case 0x4AC000: version = "Steam 64-bit IGT"; break;
-        case 0x271000: version = "Steam 32-bit"; break;
-        case 0x275000: version = "Standalone"; break;
-        default: version = "Not Suported"; break;
+        case 0x271000: version = "Steam 32-bit";     break;
+        case 0x275000: version = "Standalone";       break;
+        default:       version = "Not Supported";    break;
     }
-
-
-
-}
-
-update{
-    // TODO: Figure out igt for multi-save runs
 }
 
 start{
-    return current.framesGameOpen > 60 && current.framesGameOpen < 120;
+    if (current.igtFrames < old.igtFrames) {
+        // avoid the timer starting when the game closes and the igt is 0 for a moment
+        Thread.Sleep(50);
+        return !game.HasExited;
+    };
 }
 
 isLoading{
-    
-    if (!settings["use_igt"]){
-        if (timer.IsGameTimePaused && current.framesGameOpen != 0){
+    if (!settings["use_igt"]) {
+        if (timer.IsGameTimePaused && current.igtFrames != 0) {
             return false;
         }
     }
-    else {
-        return true;
-    }
+
+    else return true;
 }
 
 gameTime{
 
-    if (settings["use_igt"] && current.framesGameOpen > 60){
-        return TimeSpan.FromSeconds(current.framesGameOpen  / 60.0d);
+    if (settings["use_igt"]) {
+        return TimeSpan.FromSeconds(current.igtFrames / 60.0d) + vars.tempFrames;
     }
-    
 }
 
 exit{
     timer.IsGameTimePaused = true;
+
+    // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later (by NERS)
+    if (settings["use_igt"] && vars.inSolstice == false) {
+        if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
+            vars.inSolstice = true;
+            vars.tempFrames = timer.CurrentTime.GameTime;    
+        }
+    }
 }
 
 onStart{
-    vars.igtBackup = 0;
+    vars.inSolstice = false;
+    vars.tempFrames = TimeSpan.FromSeconds(0);
 }
