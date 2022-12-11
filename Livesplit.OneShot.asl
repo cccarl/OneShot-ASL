@@ -18,7 +18,6 @@ startup{
     settings.SetToolTip("game_time_set", "This won't be asked if Game Time is already being used or if the timer is running.");
     settings.Add("use_igt", true, "Use IGT instead of the LiveSplit load remover");
 
-    vars.inSolstice = false;
     vars.tempFrames = TimeSpan.FromSeconds(0);
 }
 
@@ -70,7 +69,7 @@ isLoading{
 
 gameTime{
 
-    if (settings["use_igt"]) {
+    if (settings["use_igt"] && current.igtFrames != 0) {
         return TimeSpan.FromSeconds(current.igtFrames / 60.0d) + vars.tempFrames;
     }
 }
@@ -79,15 +78,13 @@ exit{
     timer.IsGameTimePaused = true;
 
     // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later (by NERS)
-    if (settings["use_igt"] && vars.inSolstice == false) {
+    if (settings["use_igt"] && vars.tempFrames == TimeSpan.FromSeconds(0)) {
         if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
-            vars.inSolstice = true;
-            vars.tempFrames = timer.CurrentTime.GameTime;    
+            vars.tempFrames = timer.CurrentTime.GameTime;
         }
     }
 }
 
 onStart{
-    vars.inSolstice = false;
     vars.tempFrames = TimeSpan.FromSeconds(0);
 }
