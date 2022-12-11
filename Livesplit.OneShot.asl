@@ -49,6 +49,10 @@ init{
     }
 }
 
+update{
+    vars.gameTime = TimeSpan.FromSeconds(current.igtFrames / 60.0d) + vars.tempFrames;
+}
+
 start{
     if (current.igtFrames < old.igtFrames) {
         // avoid the timer starting when the game closes and the igt is 0 for a moment
@@ -68,9 +72,10 @@ isLoading{
 }
 
 gameTime{
-
-    if (settings["use_igt"] && current.igtFrames != 0) {
-        return TimeSpan.FromSeconds(current.igtFrames / 60.0d) + vars.tempFrames;
+    
+    // for the first 15s the timer is always set, once 15s have passed it will not jump back to much smaller values, this prevents livesplit from showing 0.xx when opening the game
+    if (settings["use_igt"] && ((timer.CurrentTime.GameTime > TimeSpan.FromSeconds(14) && vars.gameTime > TimeSpan.FromSeconds(14)) || timer.CurrentTime.GameTime < TimeSpan.FromSeconds(15))) {
+        return vars.gameTime;
     }
 }
 
