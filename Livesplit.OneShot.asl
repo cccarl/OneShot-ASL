@@ -19,6 +19,7 @@ startup{
     settings.Add("use_igt", true, "Use IGT instead of the LiveSplit load remover");
 
     vars.tempFrames = TimeSpan.FromSeconds(0);
+    vars.saveTimeOnStartup = false;
 }
 
 init{
@@ -47,6 +48,15 @@ init{
         case 0x275000: version = "Standalone";       break;
         default:       version = "Not Supported";    break;
     }
+
+    // if the end game file is not there after it was there when closing the game, the tempFrames will not be reset
+    if (settings["use_igt"] && vars.saveTimeOnStartup) {
+        // if file still exists -> undo tempframes
+        if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
+            vars.tempFrames = TimeSpan.FromSeconds(0);
+        }
+        vars.saveTimeOnStartup = false;
+    }
 }
 
 update{
@@ -74,7 +84,9 @@ isLoading{
 gameTime{
     
     // for the first 15s the timer is always set, once 15s have passed it will not jump back to much smaller values, this prevents livesplit from showing 0.xx when opening the game
-    if (settings["use_igt"] && ((timer.CurrentTime.GameTime > TimeSpan.FromSeconds(14) && vars.gameTime > TimeSpan.FromSeconds(14)) || timer.CurrentTime.GameTime < TimeSpan.FromSeconds(15))) {
+    // also adds the temp frames for solstice runs
+    if (settings["use_igt"] && ((timer.CurrentTime.GameTime > TimeSpan.FromSeconds(14) + vars.tempFrames && vars.gameTime > TimeSpan.FromSeconds(14) + vars.tempFrames) 
+        || timer.CurrentTime.GameTime < TimeSpan.FromSeconds(15) + vars.tempFrames)) {
         return vars.gameTime;
     }
 }
@@ -85,6 +97,7 @@ exit{
     // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later (by NERS)
     if (settings["use_igt"] && vars.tempFrames == TimeSpan.FromSeconds(0)) {
         if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
+            vars.saveTimeOnStartup = true;
             vars.tempFrames = timer.CurrentTime.GameTime;
         }
     }
