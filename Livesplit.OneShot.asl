@@ -1,7 +1,7 @@
 // pointer path by doesthisusername & NERS
 // script by SunglassesEmoji & NERS
 
-state("OneShot", "Steam 64-bit IGT"){
+state("OneShot", "Steam 64-bit IGT") {
     int igtFrames : "oneshot.exe", 0x45E6D0, 0x10, 0x10, 0x1EC;
     int room : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58, 0x0, 0x8, 0x18, 0x0; // make sure to do "room >> 1" to get the accurate room id because rpg maker xp is the engine of all time
 
@@ -18,15 +18,15 @@ state("OneShot", "Steam 64-bit IGT"){
     byte solsticeBeaten : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x500; // 0 - not beaten, 20 - beaten
 }
 
-state("OneShot", "Standalone (Autosplitting not supported)"){
+state("OneShot", "Standalone (Autosplitting not supported)") {
     int igtFrames : "oneshot.exe", 0x236D4C, 0x8, 0x1C, 0x1C8;
 }
 
-state("OneShot", "Steam 32-bit (Autosplitting not supported)"){
+state("OneShot", "Steam 32-bit (Autosplitting not supported)") {
     int igtFrames : "oneshot.exe", 0x23384C, 0x8, 0x1C, 0x1C8;
 }
 
-startup{
+startup {
     settings.Add("game_time_set", true, "Ask if Game Time should be used when opening the game");
     settings.SetToolTip("game_time_set", "This won't be asked if Game Time is already being used or if the timer is running.");
     settings.Add("use_igt", true, "Use IGT instead of the LiveSplit load remover");
@@ -68,7 +68,7 @@ startup{
     vars.saveTimeOnStartup = false;
 }
 
-init{
+init {
     // fix for odd issue where livesplit seems to hook a wrong or broken oneshot process, init{} will be rerun
     if (modules.First().ModuleMemorySize < 0x200000) {
         print("ASL: Reloading script, wrong ModuleMemorySize detected");
@@ -139,7 +139,7 @@ init{
     }
 }
 
-update{
+update {
     if(version == "Steam 64-bit IGT") {
         if(current.room != old.room) {
             print("ASL: Room changed [" + (old.room >> 1) + " -> " + (current.room >> 1) + "]");
@@ -152,7 +152,7 @@ update{
     vars.gameTime = TimeSpan.FromSeconds(current.igtFrames / 60.0d) + vars.tempFrames;
 }
 
-start{
+start {
     if (current.igtFrames < old.igtFrames) {
         // avoid the timer starting when the game closes and the igt is 0 for a moment
         Thread.Sleep(50);
@@ -160,7 +160,7 @@ start{
     };
 }
 
-reset{
+reset {
     if(current.igtFrames < old.igtFrames && vars.tempFrames == TimeSpan.FromSeconds(0)) {
         // avoid the timer resetting when the game closes and the igt is 0 for a moment
         Thread.Sleep(50);
@@ -168,7 +168,7 @@ reset{
     }
 }
 
-isLoading{
+isLoading {
     if (!settings["use_igt"]) {
         if (timer.IsGameTimePaused && current.igtFrames != 0) {
             return false;
@@ -178,7 +178,7 @@ isLoading{
     else return true;
 }
 
-gameTime{
+gameTime {
     // for the first 15s the timer is always set, once 15s have passed it will not jump back to much smaller values, this prevents livesplit from showing 0.xx when opening the game
     // also adds the temp frames for solstice runs
     if (settings["use_igt"] && ((timer.CurrentTime.GameTime > TimeSpan.FromSeconds(14) + vars.tempFrames && vars.gameTime > TimeSpan.FromSeconds(14) + vars.tempFrames) 
@@ -187,7 +187,7 @@ gameTime{
     }
 }
 
-exit{
+exit {
     timer.IsGameTimePaused = true;
 
     // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later (by NERS)
@@ -205,7 +205,7 @@ exit{
     }
 }
 
-onStart{
+onStart {
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.gameBeaten = false;
 
@@ -213,7 +213,7 @@ onStart{
     print("ASL: All splits reset");
 }
 
-split{
+split {
     if(version == "Steam 64-bit IGT") {
         if(current.playthroughType == 20 && settings["start_ng+"] && !vars.splits["start_ng+"][vars.done] && current.igtFrames < old.igtFrames) {
             Thread.Sleep(50);
