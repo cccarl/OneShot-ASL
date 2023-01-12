@@ -1,2 +1,2 @@
 # OneShot-ASL
-OneShot ASL file (load remover) for LiveSplit
+OneShot ASL file (autosplitter & load remover) for LiveSplit
