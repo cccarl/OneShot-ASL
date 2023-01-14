@@ -66,7 +66,7 @@ startup {
 
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.saveTimeOnStartup = false;
-    vars.gameBeaten = false; // for saving tempFrames, a separate variable had to be added because pointers can't be used in exit{} for obvious reasons
+    vars.gameBeaten = false; // for saving tempFrames in the Steam 64-bit IGT version, a separate variable had to be added because pointers can't be used in exit{} and it's better than looking for the file on the hard drive
 }
 
 init {
@@ -127,9 +127,9 @@ init {
     }
 
     // if the end game file is not there after it was there when closing the game, the tempFrames will not be reset
-    // the 64-bit IGT version has a pointer for the playthrough type so this is not needed in that case
+    // the Steam 64-bit IGT version has a pointer for the playthrough type so this is not needed in that case
     if(version != "Steam 64-bit IGT" && vars.saveTimeOnStartup) {
-        // if file still exists -> undo tempframes
+        // if the file still exists -> undo tempframes
         if(File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
             vars.tempFrames = TimeSpan.FromSeconds(0);
         }
@@ -184,7 +184,7 @@ exit {
     timer.IsGameTimePaused = true;
 
     // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later (by NERS)
-    // not needed for Steam 64-bit IGT as mentioned already
+    // not needed for the Steam 64-bit IGT version as mentioned like 25 times already :bailey:
     if(vars.tempFrames == TimeSpan.FromSeconds(0)) {
         if(version != "Steam 64-bit IGT") {
             if(File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
@@ -208,18 +208,16 @@ onStart {
 
 split {
     if(version == "Steam 64-bit IGT") {
+        if(current.playthroughType == 0 && (current.room >> 1) == 97 && settings["redXroom"] && !vars.splits["redXroom"][vars.done]) {
+            game.WaitForExit();
+            vars.splits["redXroom"][vars.done] = true;
+            return true;
+        }
+
         if(current.playthroughType == 20 && settings["start_ng+"] && !vars.splits["start_ng+"][vars.done] && current.igtFrames < old.igtFrames) {
             Thread.Sleep(50);
             if(!game.HasExited) {
                 vars.splits["start_ng+"][vars.done] = true;
-                return true;
-            }
-        }
-
-        if(current.playthroughType == 0) {
-            if((current.room >> 1) == 97 && settings["redXroom"] && !vars.splits["redXroom"][vars.done]) {
-                game.WaitForExit();
-                vars.splits["redXroom"][vars.done] = true;
                 return true;
             }
         }
