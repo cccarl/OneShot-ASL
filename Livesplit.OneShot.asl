@@ -43,7 +43,7 @@ startup {
     settings.Add("exit_glen_any%", true, "Exit Glen");
     settings.Add("enter_elevator_any%", true, "Enter Elevator");
     settings.Add("exit_factory", true, "Exit Factory (after getting Kip's card)");
-    settings.Add("redXroom", true, "Red X Room (game closed)");
+    settings.Add("redXroom", true, "Red X Room (game close)");
     settings.Add("any%_end", false, "Ending (EXPERIMENTAL - currently splits when you hover over one of the choices)");
 
     settings.CurrentDefaultParent = null;
@@ -59,36 +59,35 @@ startup {
     settings.Add("slab_cutscene", true, "Slab Cutscene");
     settings.Add("exit_maize", true, "Exit Maize's room");
     settings.Add("exit_glen_ng+", true, "Exit Glen");
-    settings.Add("enter_elevator_ng+", true, "Enter Elevator");
+    settings.Add("enter_elevator_ng+", true, "Enter Elevator with Plight");
     settings.Add("enter_study_room", true, "Enter Study Room");
     settings.Add("ng+_end", false, "Ending (EXPERIMENTAL - currently splits after Niko exits the game window)");
     //
 
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.saveTimeOnStartup = false;
+    vars.gameBeaten = false; // for saving tempFrames in the Steam 64-bit IGT version, a separate variable had to be added because pointers can't be used in exit{} and it's better than looking for the file on the hard drive
 }
 
 init {
     // fix for odd issue where livesplit seems to hook a wrong or broken oneshot process, init{} will be rerun
-    if (modules.First().ModuleMemorySize < 0x200000) {
+    if(modules.First().ModuleMemorySize < 0x200000) {
         print("ASL: Reloading script, wrong ModuleMemorySize detected");
         Thread.Sleep(50);
         throw new Exception();
     }
 
-    if (timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase == TimerPhase.NotRunning) {
-        var message = MessageBox.Show
-        (
+    if(timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase == TimerPhase.NotRunning) {
+        var message = MessageBox.Show(
             "LiveSplit uses Game Time or a Load Remover for this game. Would you like to change the current timing method to Game Time instead of Real Time?",
-            "LiveSplit | OneShot Load Remover", MessageBoxButtons.YesNo, MessageBoxIcon.Question
-        );
+            "LiveSplit | OneShot Load Remover", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-        if (message == DialogResult.Yes) {
+        if(message == DialogResult.Yes) {
             timer.CurrentTimingMethod = TimingMethod.GameTime;
         }
     }
 
-    switch (modules.First().ModuleMemorySize) {
+    switch(modules.First().ModuleMemorySize) {
         case 0x4AC000:
             version = "Steam 64-bit IGT";
 
@@ -96,7 +95,6 @@ init {
             vars.playthrough_type = 1; // is the split for any% or ng+?
             vars.oldroom = 2; // old room requirement
             vars.newroom = 3; // new room requirement
-            vars.gameBeaten = false; // for saving tempFrames, a separate variable had to be added because pointers can't be used in exit{} for obvious reasons
 
             vars.splits = new Dictionary<string, object[]>() {
                 {"exit_house_any%", new object[] {false, 0, 4, 13}},
@@ -129,10 +127,10 @@ init {
     }
 
     // if the end game file is not there after it was there when closing the game, the tempFrames will not be reset
-    // the 64-bit IGT version has a pointer for the playthrough type so this is not needed in that case
-    if (version != "Steam 64-bit IGT" && vars.saveTimeOnStartup) {
-        // if file still exists -> undo tempframes
-        if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
+    // the Steam 64-bit IGT version has a pointer for the playthrough type so this is not needed in that case
+    if(version != "Steam 64-bit IGT" && vars.saveTimeOnStartup) {
+        // if the file still exists -> undo tempframes
+        if(File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
             vars.tempFrames = TimeSpan.FromSeconds(0);
         }
         vars.saveTimeOnStartup = false;
@@ -153,11 +151,11 @@ update {
 }
 
 start {
-    if (current.igtFrames < old.igtFrames) {
+    if(current.igtFrames < old.igtFrames) {
         // avoid the timer starting when the game closes and the igt is 0 for a moment
         Thread.Sleep(50);
         return !game.HasExited;
-    };
+    }
 }
 
 reset {
@@ -169,19 +167,14 @@ reset {
 }
 
 isLoading {
-    if (!settings["use_igt"]) {
-        if (timer.IsGameTimePaused && current.igtFrames != 0) {
-            return false;
-        }
-    }
-
-    else return true;
+    if(settings["use_igt"]) return true;
+    else if(timer.IsGameTimePaused && current.igtFrames != 0) return false;
 }
 
 gameTime {
     // for the first 15s the timer is always set, once 15s have passed it will not jump back to much smaller values, this prevents livesplit from showing 0.xx when opening the game
     // also adds the temp frames for solstice runs
-    if (settings["use_igt"] && ((timer.CurrentTime.GameTime > TimeSpan.FromSeconds(14) + vars.tempFrames && vars.gameTime > TimeSpan.FromSeconds(14) + vars.tempFrames) 
+    if(settings["use_igt"] && ((timer.CurrentTime.GameTime > TimeSpan.FromSeconds(14) + vars.tempFrames && vars.gameTime > TimeSpan.FromSeconds(14) + vars.tempFrames) 
         || timer.CurrentTime.GameTime < TimeSpan.FromSeconds(15) + vars.tempFrames)) {
         return vars.gameTime;
     }
@@ -191,10 +184,10 @@ exit {
     timer.IsGameTimePaused = true;
 
     // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later (by NERS)
-    // not needed for Steam 64-bit IGT as mentioned already
+    // not needed for the Steam 64-bit IGT version as mentioned like 25 times already :bailey:
     if(vars.tempFrames == TimeSpan.FromSeconds(0)) {
         if(version != "Steam 64-bit IGT") {
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
+            if(File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
                 vars.saveTimeOnStartup = true;
                 vars.tempFrames = timer.CurrentTime.GameTime;
             }
@@ -215,21 +208,18 @@ onStart {
 
 split {
     if(version == "Steam 64-bit IGT") {
+        if(current.playthroughType == 0 && (current.room >> 1) == 97 && settings["redXroom"] && !vars.splits["redXroom"][vars.done]) {
+            game.WaitForExit();
+            vars.splits["redXroom"][vars.done] = true;
+            return true;
+        }
+
         if(current.playthroughType == 20 && settings["start_ng+"] && !vars.splits["start_ng+"][vars.done] && current.igtFrames < old.igtFrames) {
             Thread.Sleep(50);
             if(!game.HasExited) {
                 vars.splits["start_ng+"][vars.done] = true;
                 return true;
             }
-        }
-
-        if(current.playthroughType == 0) {
-            if((current.room >> 1) == 97 && settings["redXroom"] && !vars.splits["redXroom"][vars.done]) {
-                game.WaitForExit();
-                vars.splits["redXroom"][vars.done] = true;
-                return true;
-            }
-
         }
 
         foreach(string name in vars.splits.Keys) {
