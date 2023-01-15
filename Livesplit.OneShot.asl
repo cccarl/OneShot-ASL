@@ -1,4 +1,4 @@
-// pointer path by doesthisusername & NERS
+// pointer paths by doesthisusername & NERS
 // script by SunglassesEmoji & NERS
 
 state("OneShot", "Steam 64-bit IGT") {
@@ -143,7 +143,7 @@ update {
             print("ASL: Room changed [" + (old.room >> 1) + " -> " + (current.room >> 1) + "]");
         }
 
-        if((current.finalChoicer == 3 || current.finalChoicer == 5) && vars.gameBeaten == false) {
+        if((current.finalChoicer == 3 || current.finalChoicer == 5) && vars.gameBeaten == false && current.room == 60) {
             vars.gameBeaten = true;
         }
     }
