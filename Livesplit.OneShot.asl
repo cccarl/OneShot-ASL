@@ -67,6 +67,7 @@ startup {
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.saveTimeOnStartup = false;
     vars.gameBeaten = false; // for saving tempFrames in the Steam 64-bit IGT version, a separate variable had to be added because pointers can't be used in exit{} and it's better than looking for the file on the hard drive
+    vars.isInRedXRoom = false; // i realized just doing WaitForExit() is very bad and doesn't work for some reason
 }
 
 init {
@@ -95,29 +96,30 @@ init {
             vars.playthrough_type = 1; // is the split for any% or ng+?
             vars.oldroom = 2; // old room requirement
             vars.newroom = 3; // new room requirement
+            vars.specialCondition = 4; // does this split need a separate check?
 
             vars.splits = new Dictionary<string, object[]>() {
-                {"exit_house_any%", new object[] {false, 0, 4, 13}},
-                {"generator", new object[] {false, 0, 16, 16}}, // the check for the generator's state is in split{}
-                {"exit_barrens", new object[] {false, 0, 19, 27}},
-                {"alula", new object[] {false, 0, 40, 38}}, // the check for alula's state is in split{}
-                {"exit_glen_any%", new object[] {false, 0, 46, 47}},
-                {"enter_elevator_any%", new object[] {false, 0, 48, 22}},
-                {"exit_factory", new object[] {false, 0, 112, 104}}, // the check for having kip's card is in split{}
-                {"redXroom", new object[] {false, 0, 97, 0}}, // had to make a separate check for this in split{} because otherwise it wouldn't work sometimes
-                {"any%_end", new object[] {false, 0, 60, 60}}, // the check for the choicer is in split{}
-            
-                {"start_ng+", new object[] {false, 20, -1, -1}}, // had to put this here but the check for it is put separately in split{}
+                {"exit_house_any%", new object[] {false, 0, 4, 13, 0}},
+                {"generator", new object[] {false, 0, 16, 16, 1}},
+                {"exit_barrens", new object[] {false, 0, 19, 27, 0}},
+                {"alula", new object[] {false, 0, 40, 38, 2}},
+                {"exit_glen_any%", new object[] {false, 0, 46, 47, 0}},
+                {"enter_elevator_any%", new object[] {false, 0, 48, 22, 0}},
+                {"exit_factory", new object[] {false, 0, 112, 104, 3}},
+                {"redXroom", new object[] {false, 0, 97, 97, 4}},
+                {"any%_end", new object[] {false, 0, 60, 60, 5}},  
 
-                {"exit_house_ng+", new object[] {false, 20, 4, 13}},
-                {"deep_mines", new object[] {false, 20, 195, 102}},
-                {"enter_glen", new object[] {false, 20, 197, 208}},
-                {"slab_cutscene", new object[] {false, 20, 212, 67}},
-                {"exit_maize", new object[] {false, 20, 203, 202}}, // the check for maize's state is in split{}
-                {"exit_glen_ng+", new object[] {false, 20, 239, 213}},
-                {"enter_elevator_ng+", new object[] {false, 20, 222, 228}},
-                {"enter_study_room", new object[] {false, 20, 222, 249}},
-                {"ng+_end", new object[] {false, 20, 255, 255}}
+                {"start_ng+", new object[] {false, 20, 1, 1, 6}},
+
+                {"exit_house_ng+", new object[] {false, 20, 4, 13, 0}},
+                {"deep_mines", new object[] {false, 20, 195, 102, 0}},
+                {"enter_glen", new object[] {false, 20, 197, 208, 0}},
+                {"slab_cutscene", new object[] {false, 20, 212, 67, 0}},
+                {"exit_maize", new object[] {false, 20, 203, 202, 7}},
+                {"exit_glen_ng+", new object[] {false, 20, 239, 213, 0}},
+                {"enter_elevator_ng+", new object[] {false, 20, 222, 228, 0}},
+                {"enter_study_room", new object[] {false, 20, 222, 249, 0}},
+                {"ng+_end", new object[] {false, 20, 255, 255, 8}}
             };
 
             break;
@@ -141,6 +143,10 @@ update {
     if(version == "Steam 64-bit IGT") {
         if(current.room != old.room) {
             print("ASL: Room changed [" + (old.room >> 1) + " -> " + (current.room >> 1) + "]");
+
+            if((current.room >> 1) == 97 && current.playthroughType == 0 && !vars.isInRedXRoom) {
+                vars.isInRedXRoom = true;
+            }
         }
 
         if((current.finalChoicer == 3 || current.finalChoicer == 5) && vars.gameBeaten == false && (current.room >> 1) == 60) {
@@ -201,6 +207,7 @@ exit {
 onStart {
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.gameBeaten = false;
+    vars.isInRedXRoom = false;
 
     foreach(string split in vars.splits.Keys) vars.splits[split][vars.done] = false;
     print("ASL: All splits reset");
@@ -208,50 +215,52 @@ onStart {
 
 split {
     if(version == "Steam 64-bit IGT") {
-        if(current.playthroughType == 0 && (current.room >> 1) == 97 && settings["redXroom"] && !vars.splits["redXroom"][vars.done]) {
-            game.WaitForExit();
-            vars.splits["redXroom"][vars.done] = true;
-            return true;
-        }
-
-        if(current.playthroughType == 20 && settings["start_ng+"] && !vars.splits["start_ng+"][vars.done] && current.igtFrames < old.igtFrames) {
-            Thread.Sleep(50);
-            if(!game.HasExited) {
-                vars.splits["start_ng+"][vars.done] = true;
-                return true;
-            }
-        }
-
         foreach(string name in vars.splits.Keys) {
             if(settings[name] && !vars.splits[name][vars.done]) {
-                // check for playthrough type
                 if(current.playthroughType != vars.splits[name][vars.playthrough_type]) continue;
-                // check for old room requirement
                 if((old.room >> 1) != vars.splits[name][vars.oldroom]) continue;
-                // check for new room requirement
                 if((current.room >> 1) != vars.splits[name][vars.newroom]) continue;
 
-                // separate check for the generator's state
-                if(name == "generator" && current.generatorState != 20) continue;
+                bool pass = false;
+                int condition = vars.splits[name][vars.specialCondition];
+                switch(condition) {
+                    case 0:
+                        pass = true;
+                        break;
+                    case 1: // generator
+                        pass = (current.generatorState == 20);
+                        break;
+                    case 2: // alula
+                        pass = (current.alulaState == 9);
+                        break;
+                    case 3: // exit_factory
+                        pass = (current.kipGaveCard == 20);
+                        break;
+                    case 4: // redXroom
+                        pass = (vars.isInRedXRoom && game.HasExited);
+                        break;
+                    case 5: // any%_end
+                        pass = (current.finalChoicer == 3 || current.finalChoicer == 5);
+                        break;
+                    case 6: // start_ng+
+                        if(current.igtFrames < old.igtFrames) {
+                            Thread.Sleep(50);
+                            pass = (!game.HasExited);
+                        }
+                        break;
+                    case 7: // exit_maize
+                        pass = (current.maizeState == 20);
+                        break;
+                    case 8: // ng+_end
+                        pass = (current.solsticeBeaten == 20);
+                        break;
+                }
 
-                // separate check for alula's state
-                if(name == "alula" && current.alulaState != 9) continue;
-
-                // separate check for having kip's card
-                if(name == "exit_factory" && current.kipGaveCard != 20) continue;
-
-                // separate check for the final any% choicer
-                if(name == "any%_end" && current.finalChoicer != 3 && current.finalChoicer != 5) continue;
-
-                // separate check for maize's state
-                if(name == "exit_maize" && current.maizeState != 20) continue;
-
-                // separate check for ng+ ending
-                if(name == "ng+_end" && current.solsticeBeaten != 20) continue;
-
-                vars.splits[name][vars.done] = true;
-                print("ASL: Split " + name + " triggered successfully");
-                return true;
+                if(pass) {
+                    vars.splits[name][vars.done] = true;
+                    print("ASL: Split " + name + " triggered successfully");
+                    return true;
+                }
             }
         }
     }
