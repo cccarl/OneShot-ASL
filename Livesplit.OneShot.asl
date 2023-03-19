@@ -210,8 +210,10 @@ onStart {
     vars.gameBeaten = false;
     vars.isInRedXRoom = false;
 
-    foreach(string split in vars.splits.Keys) vars.splits[split][vars.done] = false;
-    print("[OneShot] All splits reset");
+	if (game != null) {
+        foreach(string split in vars.splits.Keys) vars.splits[split][vars.done] = false;
+        print("[OneShot] All splits reset");
+	}
 }
 
 split {
