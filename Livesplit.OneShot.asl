@@ -1,9 +1,9 @@
-// pointer paths by doesthisusername & NERS
-// script by SunglassesEmoji & NERS
+// Pointer paths by doesthisusername & NERS
+// Script by SunglassesEmoji & NERS
 
 state("OneShot", "Steam 64-bit IGT") {
     int igtFrames : "oneshot.exe", 0x45E6D0, 0x10, 0x10, 0x1EC;
-    int room : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58, 0x0, 0x8, 0x18, 0x0; // make sure to do "room >> 1" to get the accurate room id because rpg maker xp is the engine of all time
+    int room : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58, 0x0, 0x8, 0x18, 0x0;
 
     byte playthroughType : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x4C0; // 0 - any%, 20 - ng+
     
@@ -11,7 +11,7 @@ state("OneShot", "Steam 64-bit IGT") {
     byte generatorState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0xD8; // 0 - off, 20 - on
     byte alulaState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x398, 0x0, 0x8, 0x10, 0x20, 0x60; // 0 - before puzzle, 5 - after puzzle but not in party, 9 - in party
     byte kipGaveCard : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x200; // 0 - no, 20 - yes
-    byte finalChoicer : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x398, 0x0, 0x8, 0x10, 0x20, 0x378; // random ass value - no choice yet, 3 - return the sun, 5 - go home
+    byte finalChoicer : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x398, 0x0, 0x8, 0x10, 0x20, 0x378; // random value - no choice yet, 3 - return the sun, 5 - go home
 
     // ng+ pointers
     byte maizeState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x7B8; // 0 - not talked to, 20 - talked to
@@ -30,7 +30,7 @@ startup {
     settings.Add("game_time_set", true, "Ask if Game Time should be used when opening the game");
     settings.SetToolTip("game_time_set", "This won't be asked if Game Time is already being used or if the timer is running.");
     settings.Add("use_igt", true, "Use IGT instead of the LiveSplit load remover");
-    settings.SetToolTip("use_igt", "Uncheck this if you're using a version of the game that doesn't have built-in IGT\nor if you just don't want to use it, for some reason.");
+    settings.SetToolTip("use_igt", "Uncheck this if you're using a version of the game that doesn't have built-in IGT\nor if you just don't want to use it.");
 
     //
     settings.Add("any%", true, "Any% Splits");
@@ -73,7 +73,7 @@ startup {
 init {
     // fix for odd issue where livesplit seems to hook a wrong or broken oneshot process, init{} will be rerun
     if(modules.First().ModuleMemorySize < 0x200000) {
-        print("ASL: Reloading script, wrong ModuleMemorySize detected");
+        print("[OneShot] Reloading script, wrong ModuleMemorySize detected");
         Thread.Sleep(50);
         throw new Exception();
     }
@@ -141,15 +141,16 @@ init {
 
 update {
     if(version == "Steam 64-bit IGT") {
+        current.room = (current.room >> 1);
         if(current.room != old.room) {
-            print("ASL: Room changed [" + (old.room >> 1) + " -> " + (current.room >> 1) + "]");
+            print("[OneShot] Room changed (" + old.room + " -> " + current.room + ")");
 
-            if((current.room >> 1) == 97 && current.playthroughType == 0 && !vars.isInRedXRoom) {
+            if(current.room == 97 && current.playthroughType == 0 && !vars.isInRedXRoom) {
                 vars.isInRedXRoom = true;
             }
         }
 
-        if((current.finalChoicer == 3 || current.finalChoicer == 5) && vars.gameBeaten == false && (current.room >> 1) == 60) {
+        if((current.finalChoicer == 3 || current.finalChoicer == 5) && vars.gameBeaten == false && current.room == 60) {
             vars.gameBeaten = true;
         }
     }
@@ -160,7 +161,7 @@ start {
     if(current.igtFrames < old.igtFrames) {
         // avoid the timer starting when the game closes and the igt is 0 for a moment
         Thread.Sleep(50);
-        return !game.HasExited;
+        return !game.HasExited && current.room == 1; // room 1 is the main menu
     }
 }
 
@@ -168,7 +169,7 @@ reset {
     if(current.igtFrames < old.igtFrames && vars.tempFrames == TimeSpan.FromSeconds(0)) {
         // avoid the timer resetting when the game closes and the igt is 0 for a moment
         Thread.Sleep(50);
-        return !game.HasExited;
+        return !game.HasExited && current.room == 1; // room 1 is the main menu
     }
 }
 
@@ -189,8 +190,8 @@ gameTime {
 exit {
     timer.IsGameTimePaused = true;
 
-    // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later (by NERS)
-    // not needed for the Steam 64-bit IGT version as mentioned like 25 times already :bailey:
+    // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later
+    // not needed for the Steam 64-bit IGT version
     if(vars.tempFrames == TimeSpan.FromSeconds(0)) {
         if(version != "Steam 64-bit IGT") {
             if(File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) {
@@ -210,7 +211,7 @@ onStart {
     vars.isInRedXRoom = false;
 
     foreach(string split in vars.splits.Keys) vars.splits[split][vars.done] = false;
-    print("ASL: All splits reset");
+    print("[OneShot] All splits reset");
 }
 
 split {
@@ -218,8 +219,8 @@ split {
         foreach(string name in vars.splits.Keys) {
             if(settings[name] && !vars.splits[name][vars.done]) {
                 if(current.playthroughType != vars.splits[name][vars.playthrough_type]) continue;
-                if((old.room >> 1) != vars.splits[name][vars.oldroom]) continue;
-                if((current.room >> 1) != vars.splits[name][vars.newroom]) continue;
+                if(old.room != vars.splits[name][vars.oldroom]) continue;
+                if(current.room != vars.splits[name][vars.newroom]) continue;
 
                 bool pass = false;
                 int condition = vars.splits[name][vars.specialCondition];
@@ -245,7 +246,7 @@ split {
                     case 6: // start_ng+
                         if(current.igtFrames < old.igtFrames) {
                             Thread.Sleep(50);
-                            pass = (!game.HasExited);
+                            pass = (!game.HasExited && current.room == 1);
                         }
                         break;
                     case 7: // exit_maize
