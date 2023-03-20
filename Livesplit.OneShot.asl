@@ -261,7 +261,7 @@ split {
 
                 if(pass) {
                     vars.splits[name][vars.done] = true;
-                    print("ASL: Split " + name + " triggered successfully");
+                    print("[OneShot] Split " + name + " triggered successfully");
                     return true;
                 }
             }
