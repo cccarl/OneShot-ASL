@@ -4,18 +4,19 @@
 state("OneShot", "Steam 64-bit IGT") {
     int igtFrames : "oneshot.exe", 0x45E6D0, 0x10, 0x10, 0x1EC;
     int room : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58, 0x0, 0x8, 0x18, 0x0;
-
+    
+    string32 sound : "oneshot.exe", 0x45E6D0, 0x10, 0x48, 0x540, 0x80, 0x30, 0x38, 0x0, 0x0; // this doesn't always update for some reason but for the ending it's fine
+    string32 choicer : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x2A8, 0x0, 0x8, 0x18, 0x38, 0x10, 0x10; // top choicer, this also doesn't always update for some reason but for the ending it's fine
+    
     byte playthroughType : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x4C0; // 0 - any%, 20 - ng+
     
     // any% pointers
     byte generatorState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0xD8; // 0 - off, 20 - on
     byte alulaState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x398, 0x0, 0x8, 0x10, 0x20, 0x60; // 0 - before puzzle, 5 - after puzzle but not in party, 9 - in party
     byte kipGaveCard : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x200; // 0 - no, 20 - yes
-    byte finalChoicer : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x398, 0x0, 0x8, 0x10, 0x20, 0x378; // random value - no choice yet, 3 - return the sun, 5 - go home
 
     // ng+ pointers
     byte maizeState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x7B8; // 0 - not talked to, 20 - talked to
-    byte solsticeBeaten : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x500; // 0 - not beaten, 20 - beaten
 }
 
 state("OneShot", "Standalone (Autosplitting not supported)") {
@@ -35,7 +36,6 @@ startup {
     //
     settings.Add("any%", true, "Any% Splits");
     settings.CurrentDefaultParent = "any%";
-
     settings.Add("exit_house_any%", true, "Exit House");
     settings.Add("generator", true, "Generator Powered On");
     settings.Add("exit_barrens", true, "Exit Barrens");
@@ -44,15 +44,13 @@ startup {
     settings.Add("enter_elevator_any%", true, "Enter Elevator");
     settings.Add("exit_factory", true, "Exit Factory (after getting Kip's card)");
     settings.Add("redXroom", true, "Red X Room (game close)");
-    settings.Add("any%_end", false, "Ending (EXPERIMENTAL - currently splits when you hover over one of the choices)");
-
+    settings.Add("any%_end", true, "Ending");
     settings.CurrentDefaultParent = null;
 
     settings.Add("start_ng+", false, "Split for starting NG+ in Solstice runs");
-
+    
     settings.Add("ng+", true, "New Game+ Splits");
     settings.CurrentDefaultParent = "ng+";
-
     settings.Add("exit_house_ng+", true, "Exit House");
     settings.Add("deep_mines", true, "Enter Deep Mines");
     settings.Add("enter_glen", true, "Enter Glen");
@@ -61,7 +59,7 @@ startup {
     settings.Add("exit_glen_ng+", true, "Exit Glen");
     settings.Add("enter_elevator_ng+", true, "Enter Elevator with Plight");
     settings.Add("enter_study_room", true, "Enter Study Room");
-    settings.Add("ng+_end", false, "Ending (EXPERIMENTAL - currently splits after Niko exits the game window)");
+    settings.Add("ng+_end", true, "Ending");
     //
 
     vars.tempFrames = TimeSpan.FromSeconds(0);
@@ -150,7 +148,7 @@ update {
             }
         }
 
-        if((current.finalChoicer == 3 || current.finalChoicer == 5) && vars.gameBeaten == false && current.room == 60) {
+        if(current.sound == @"Audio/SE/title_decision" && vars.gameBeaten == false && current.room == 60) {
             vars.gameBeaten = true;
         }
     }
@@ -243,7 +241,7 @@ split {
                         pass = (vars.isInRedXRoom && game.HasExited);
                         break;
                     case 5: // any%_end
-                        pass = (current.finalChoicer == 3 || current.finalChoicer == 5);
+                        pass = (current.sound == @"Audio/SE/title_decision");
                         break;
                     case 6: // start_ng+
                         if(current.igtFrames < old.igtFrames) {
@@ -255,7 +253,7 @@ split {
                         pass = (current.maizeState == 20);
                         break;
                     case 8: // ng+_end
-                        pass = (current.solsticeBeaten == 20);
+                        pass = (old.choicer == @"Goodbye, Niko." && current.choicer != @"Goodbye, Niko.");
                         break;
                 }
 
