@@ -34,7 +34,7 @@ startup {
     settings.SetToolTip("use_igt", "Uncheck this if you're using a version of the game that doesn't have built-in IGT\nor if you just don't want to use it.");
 
     //
-    settings.Add("any%", true, "Any% Splits");
+    settings.Add("any%", false, "Any% Splits");
     settings.CurrentDefaultParent = "any%";
     settings.Add("exit_house_any%", true, "Exit House");
     settings.Add("generator", true, "Generator Powered On");
@@ -49,7 +49,7 @@ startup {
 
     settings.Add("start_ng+", false, "Split for starting NG+ in Solstice runs");
     
-    settings.Add("ng+", true, "New Game+ Splits");
+    settings.Add("ng+", false, "New Game+ Splits");
     settings.CurrentDefaultParent = "ng+";
     settings.Add("exit_house_ng+", true, "Exit House");
     settings.Add("deep_mines", true, "Enter Deep Mines");
@@ -65,7 +65,8 @@ startup {
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.saveTimeOnStartup = false;
     vars.gameBeaten = false; // for saving tempFrames in the Steam 64-bit IGT version, a separate variable had to be added because pointers can't be used in exit{} and it's better than looking for the file on the hard drive
-    vars.isInRedXRoom = false; // i realized just doing WaitForExit() is very bad and doesn't work for some reason
+    vars.isInRedXRoom = false;
+    vars.TimerModel = new TimerModel { CurrentState = timer };
 }
 
 init {
@@ -104,22 +105,21 @@ init {
                 {"exit_glen_any%", new object[] {false, 0, 46, 47, 0}},
                 {"enter_elevator_any%", new object[] {false, 0, 48, 22, 0}},
                 {"exit_factory", new object[] {false, 0, 112, 104, 3}},
-                {"redXroom", new object[] {false, 0, 97, 97, 4}},
-                {"any%_end", new object[] {false, 0, 60, 60, 5}},  
+                // redXroom is handled in exit{}
+                {"any%_end", new object[] {false, 0, 60, 60, 4}},  
 
-                {"start_ng+", new object[] {false, 20, 1, 1, 6}},
+                {"start_ng+", new object[] {false, 20, 1, 1, 5}},
 
                 {"exit_house_ng+", new object[] {false, 20, 4, 13, 0}},
                 {"deep_mines", new object[] {false, 20, 195, 102, 0}},
                 {"enter_glen", new object[] {false, 20, 197, 208, 0}},
                 {"slab_cutscene", new object[] {false, 20, 212, 67, 0}},
-                {"exit_maize", new object[] {false, 20, 203, 202, 7}},
+                {"exit_maize", new object[] {false, 20, 203, 202, 6}},
                 {"exit_glen_ng+", new object[] {false, 20, 239, 213, 0}},
                 {"enter_elevator_ng+", new object[] {false, 20, 222, 228, 0}},
                 {"enter_study_room", new object[] {false, 20, 222, 249, 0}},
-                {"ng+_end", new object[] {false, 20, 255, 255, 8}}
+                {"ng+_end", new object[] {false, 20, 255, 255, 7}}
             };
-
             break;
         case 0x271000: version = "Steam 32-bit (Autosplitting not supported)"; break;
         case 0x275000: version = "Standalone (Autosplitting not supported)"; break;
@@ -201,6 +201,12 @@ exit {
             vars.tempFrames = timer.CurrentTime.GameTime;
         }
     }
+
+    if(vars.isInRedXRoom) {
+        vars.TimerModel.Split();
+        vars.isInRedXRoom = false;
+        print("[OneShot] Split redXroom triggered successfully");
+    }
 }
 
 onStart {
@@ -237,22 +243,19 @@ split {
                     case 3: // exit_factory
                         pass = (current.kipGaveCard == 20);
                         break;
-                    case 4: // redXroom
-                        pass = (vars.isInRedXRoom && game.HasExited);
-                        break;
-                    case 5: // any%_end
+                    case 4: // any%_end
                         pass = (current.sound == @"Audio/SE/title_decision");
                         break;
-                    case 6: // start_ng+
+                    case 5: // start_ng+
                         if(current.igtFrames < old.igtFrames) {
                             Thread.Sleep(50);
                             pass = (!game.HasExited && current.room == 1);
                         }
                         break;
-                    case 7: // exit_maize
+                    case 6: // exit_maize
                         pass = (current.maizeState == 20);
                         break;
-                    case 8: // ng+_end
+                    case 7: // ng+_end
                         pass = (old.choicer == @"Goodbye, Niko." && current.choicer != @"Goodbye, Niko.");
                         break;
                 }
