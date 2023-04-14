@@ -1,22 +1,31 @@
-// Pointer paths by doesthisusername & NERS
-// Script by SunglassesEmoji & NERS
+/*
+Pointer paths by doesthisusername & NERS
+Script by SunglassesEmoji & NERS
+
+Switches used:
+14 - ramquest finished
+27 - generator on
+64 - kip gave card
+76 - ate pancakes
+* 79 - roomba
+126-133 - trades
+134 - reset ram puzzle once
+135-141 - books
+152 - Beat the game once
+160 - Beat Solstice
+247 - maize made bridges
+
+Variables used:
+12 - alula state
+*/
 
 state("OneShot", "Steam 64-bit IGT") {
     int igtFrames : "oneshot.exe", 0x45E6D0, 0x10, 0x10, 0x1EC;
-    int room : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58, 0x0, 0x8, 0x18, 0x0;
-    
-    string32 sound : "oneshot.exe", 0x45E6D0, 0x10, 0x48, 0x540, 0x80, 0x30, 0x38, 0x0, 0x0; // this doesn't always update for some reason but for the ending it's fine
-    string32 choicer : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x2A8, 0x0, 0x8, 0x18, 0x38, 0x10, 0x10; // top choicer, this also doesn't always update for some reason but for the ending it's fine
-    
-    byte playthroughType : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x4C0; // 0 - any%, 20 - ng+
-    
-    // any% pointers
-    byte generatorState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0xD8; // 0 - off, 20 - on
-    byte alulaState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x398, 0x0, 0x8, 0x10, 0x20, 0x60; // 0 - before puzzle, 5 - after puzzle but not in party, 9 - in party
-    byte kipGaveCard : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x200; // 0 - no, 20 - yes
+    int room : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58, 0x0, 0x8, 0x18, 0x0;    
+    string32 choicer : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x2A8, 0x0, 0x8, 0x18, 0x38, 0x10, 0x10;
+    string32 sound : "oneshot.exe", 0x45E6D0, 0x10, 0x48, 0x540, 0x80, 0x30, 0x38, 0x0, 0x0;
 
-    // ng+ pointers
-    byte maizeState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x7B8; // 0 - not talked to, 20 - talked to
+    int roombapleadingface : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x278; // * had to make a separate pointer for this one so i can access its old value
 }
 
 state("OneShot", "Standalone (Autosplitting not supported)") {
@@ -48,7 +57,6 @@ startup {
     settings.CurrentDefaultParent = null;
 
     settings.Add("start_ng+", false, "Split for starting NG+ in Solstice runs");
-    
     settings.Add("ng+", false, "New Game+ Splits");
     settings.CurrentDefaultParent = "ng+";
     settings.Add("exit_house_ng+", true, "Exit House");
@@ -60,27 +68,38 @@ startup {
     settings.Add("enter_elevator_ng+", true, "Enter Elevator with Plight");
     settings.Add("enter_study_room", true, "Enter Study Room");
     settings.Add("ng+_end", true, "Ending");
+    settings.CurrentDefaultParent = null;
+
+    settings.Add("achievements", false, "Achievement Splits");
+    settings.CurrentDefaultParent = "achievements";
+    settings.Add("shock", true, "Generator Shock");
+    settings.Add("ram_whisperer", true, "Ram Whisperer");
+    settings.Add("extreme_bartering", true, "Extreme Bartering");
+    settings.Add("we_ride_at_dawn", true, "We Ride at Dawn");
+    settings.Add("secret", true, "Secret (ram room)");
+    settings.Add("bookworm", true, "Bookworm");
+    settings.Add("pancakes", true, "Pancakes");
+    settings.Add("return", true, "Return (game close)");
     //
 
     vars.done = 0; // did the split get triggered already or not?
-    vars.playthrough_type = 1; // is the split for any% or ng+?
+    vars.playthrough_type = 1; // is the split for any% (0) or ng+ (20)?
     vars.oldroom = 2; // old room requirement
     vars.newroom = 3; // new room requirement
     vars.specialCondition = 4; // does this split need a separate check?
 
     vars.splits = new Dictionary<string, object[]>() {
         {"exit_house_any%", new object[] {false, 0, 4, 13, 0}},
-        {"generator", new object[] {false, 0, 16, 16, 1}},
+        {"generator", new object[] {false, 0, -1, 16, 1}},
         {"exit_barrens", new object[] {false, 0, 19, 27, 0}},
         {"alula", new object[] {false, 0, 40, 38, 2}},
         {"exit_glen_any%", new object[] {false, 0, 46, 47, 0}},
         {"enter_elevator_any%", new object[] {false, 0, 48, 22, 0}},
         {"exit_factory", new object[] {false, 0, 112, 104, 3}},
         {"redXroom", new object[] {false, -1, -1, -1, -1}}, // redXroom is handled in exit{} but i had to define it here to get rid of errors
-        {"any%_end", new object[] {false, 0, 60, 60, 4}},  
+        {"any%_end", new object[] {false, 0, -1, 60, 4}},  
 
         {"start_ng+", new object[] {false, 20, 1, 1, 5}},
-
         {"exit_house_ng+", new object[] {false, 20, 4, 13, 0}},
         {"deep_mines", new object[] {false, 20, 195, 102, 0}},
         {"enter_glen", new object[] {false, 20, 197, 208, 0}},
@@ -89,12 +108,21 @@ startup {
         {"exit_glen_ng+", new object[] {false, 20, 239, 213, 0}},
         {"enter_elevator_ng+", new object[] {false, 20, 222, 228, 0}},
         {"enter_study_room", new object[] {false, 20, 222, 249, 0}},
-        {"ng+_end", new object[] {false, 20, 255, 255, 7}}
+        {"ng+_end", new object[] {false, 20, -1, 255, 7}},
+
+        {"shock", new object[] {false, 0, -1, 16, 8}},
+        {"ram_whisperer", new object[] {false, 0, -1, 29, 9}},
+        {"extreme_bartering", new object[] {false, 0, -1, 37, 10}},
+        {"we_ride_at_dawn", new object[] {false, 0, -1, 130, 11}},
+        {"secret", new object[] {false, 0, 91, 135, 0}},
+        {"bookworm", new object[] {false, 0, -1, -1, 12}},
+        {"pancakes", new object[] {false, 0, -1, 53, 13}},
+        {"return", new object[] {false, -1, -1, -1, -1}} // same thing as redXroom
     };
 
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.saveTimeOnStartup = false;
-    vars.gameBeaten = false; // for saving tempFrames in the Steam 64-bit IGT version, a separate variable had to be added because pointers can't be used in exit{} and it's better than looking for the file on the hard drive
+    vars.gameBeaten = false; // for saving tempFrames in the Steam 64-bit IGT version & the Return achievement, a separate variable had to be added because pointers can't be used in exit{} and it's better than looking for the file on the hard drive
     vars.isInRedXRoom = false;
     vars.TimerModel = new TimerModel { CurrentState = timer };
 }
@@ -109,7 +137,7 @@ init {
 
     if(timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase == TimerPhase.NotRunning) {
         var message = MessageBox.Show(
-            "LiveSplit uses Game Time or a Load Remover for this game. Would you like to change the current timing method to Game Time instead of Real Time?",
+            "LiveSplit uses a Load Remover for this game. Would you like to change the current timing method to Game Time instead of Real Time?",
             "LiveSplit | OneShot Load Remover", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
         if(message == DialogResult.Yes) {
@@ -118,7 +146,11 @@ init {
     }
 
     switch(modules.First().ModuleMemorySize) {
-        case 0x4AC000: version = "Steam 64-bit IGT"; break;
+        case 0x4AC000: 
+            version = "Steam 64-bit IGT"; 
+            current.switches = new int[386];
+            current.variables = new int[119];
+            break;
         case 0x271000: version = "Steam 32-bit (Autosplitting not supported)"; break;
         case 0x275000: version = "Standalone (Autosplitting not supported)"; break;
         default: version = "Not Supported"; break;
@@ -137,18 +169,18 @@ init {
 
 update {
     if(version == "Steam 64-bit IGT") {
+        for(int i = 1; i <= 385; i++)
+            current.switches[i] = new DeepPointer("x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, i*0x8).Deref<int>(game); 
+            // i didn't convert it to a bool because if the switch isn't messed with at all then the variable is set to 8 for some reason regardless if it's true (20) or false (0)
+        for(int i = 1; i <= 118; i++)
+            current.variables[i] = new DeepPointer("x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x398, 0x0, 0x8, 0x10, 0x20, i*0x8).Deref<int>(game) / 2;
+
         current.room = (current.room >> 1);
         if(current.room != old.room) {
             print("[OneShot] Room changed (" + old.room + " -> " + current.room + ")");
-
-            if(current.room == 97 && current.playthroughType == 0 && !vars.isInRedXRoom) {
-                vars.isInRedXRoom = true;
-            }
+            if(current.room == 97 && current.switches[152] == 0 && !vars.isInRedXRoom) vars.isInRedXRoom = true;
         }
-
-        if(current.sound == @"Audio/SE/title_decision" && vars.gameBeaten == false && current.room == 60) {
-            vars.gameBeaten = true;
-        }
+        if(current.sound == @"Audio/SE/title_decision" && vars.gameBeaten == false && current.room == 60) vars.gameBeaten = true;
     }
     vars.gameTime = TimeSpan.FromSeconds(current.igtFrames / 60.0d) + vars.tempFrames;
 }
@@ -206,6 +238,11 @@ exit {
 	    vars.splits["redXroom"][vars.done] = true;
         print("[OneShot] Split redXroom triggered successfully");
     }
+    if(vars.gameBeaten && !vars.splits["return"][vars.done] && settings["return"]) {
+        vars.TimerModel.Split();
+        vars.splits["return"][vars.done] = true;
+        print("[OneShot] Split return triggered successfully");    
+    }
 }
 
 onStart {
@@ -213,7 +250,7 @@ onStart {
     vars.gameBeaten = false;
     vars.isInRedXRoom = false;
 
-	if (game != null) {
+	if(game != null) {
         foreach(string split in vars.splits.Keys) vars.splits[split][vars.done] = false;
         print("[OneShot] All splits reset");
 	}
@@ -223,28 +260,26 @@ split {
     if(version == "Steam 64-bit IGT") {
         foreach(string name in vars.splits.Keys) {
             if(settings[name] && !vars.splits[name][vars.done]) {
-                if(current.playthroughType != vars.splits[name][vars.playthrough_type]) continue;
-                if(old.room != vars.splits[name][vars.oldroom]) continue;
-                if(current.room != vars.splits[name][vars.newroom]) continue;
+                if(current.switches[152] != vars.splits[name][vars.playthrough_type]) continue;
+                if(vars.splits[name][vars.oldroom] != -1 && old.room != vars.splits[name][vars.oldroom]) continue;
+                if(vars.splits[name][vars.newroom] != -1 && current.room != vars.splits[name][vars.newroom]) continue;
 
-                bool pass = false;
+                bool pass = true;
                 int condition = vars.splits[name][vars.specialCondition];
                 switch(condition) {
-                    case 0:
-                        pass = true;
-                        break;
                     case 1: // generator
-                        pass = (current.generatorState == 20);
+                        pass = (current.switches[27] == 20);
                         break;
                     case 2: // alula
-                        pass = (current.alulaState == 9);
+                        pass = (current.variables[12] == 4);
                         break;
                     case 3: // exit_factory
-                        pass = (current.kipGaveCard == 20);
+                        pass = (current.switches[64] == 20);
                         break;
                     case 4: // any%_end
                         pass = (current.sound == @"Audio/SE/title_decision");
                         break;
+
                     case 5: // start_ng+
                         if(current.igtFrames < old.igtFrames) {
                             Thread.Sleep(50);
@@ -252,10 +287,39 @@ split {
                         }
                         break;
                     case 6: // exit_maize
-                        pass = (current.maizeState == 20);
+                        pass = (current.switches[247] == 20);
                         break;
                     case 7: // ng+_end
                         pass = (old.choicer == @"Goodbye, Niko." && current.choicer != @"Goodbye, Niko.");
+                        break;
+
+                    case 8: // shock
+                        pass = (old.sound != null && current.sound == null);
+                        break;
+                    case 9: // ram_whisperer
+                        pass = (current.switches[14] == 20 && (current.switches[134] == 0 || current.switches[134] == 8));
+                        break;
+                    case 10: // extreme_bartering
+                        for(int i = 126; i <= 133; i++) {
+                            if(current.switches[i] == 0) {
+                                pass = false;
+                                break;
+                            }
+                        }
+                        break;
+                    case 11: // we_ride_at_dawn
+                        pass = (old.roombapleadingface == 20 && current.roombapleadingface == 0);
+                        break;
+                    case 12: // bookworm
+                        for(int i = 135; i <= 141; i++) {
+                            if(current.switches[i] == 0) {
+                                pass = false;
+                                break;
+                            }
+                        }
+                        break;
+                    case 13: // pancakes
+                        pass = (current.switches[76] == 20);
                         break;
                 }
 
