@@ -202,7 +202,7 @@ exit {
         }
     }
 
-    if(vars.isInRedXRoom && !vars.splits["redXroom"][vars.done]) {
+    if(vars.isInRedXRoom && !vars.splits["redXroom"][vars.done] && settings["redXroom"]) {
         vars.TimerModel.Split();
         vars.isInRedXRoom = false;
 	vars.splits["redXroom"][vars.done] = true;
