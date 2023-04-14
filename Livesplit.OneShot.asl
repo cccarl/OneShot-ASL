@@ -202,9 +202,10 @@ exit {
         }
     }
 
-    if(vars.isInRedXRoom) {
+    if(vars.isInRedXRoom && !vars.splits["redXroom"][vars.done]) {
         vars.TimerModel.Split();
         vars.isInRedXRoom = false;
+	vars.splits["redXroom"][vars.done] = true;
         print("[OneShot] Split redXroom triggered successfully");
     }
 }
