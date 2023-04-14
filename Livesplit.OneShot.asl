@@ -62,6 +62,36 @@ startup {
     settings.Add("ng+_end", true, "Ending");
     //
 
+    vars.done = 0; // did the split get triggered already or not?
+    vars.playthrough_type = 1; // is the split for any% or ng+?
+    vars.oldroom = 2; // old room requirement
+    vars.newroom = 3; // new room requirement
+    vars.specialCondition = 4; // does this split need a separate check?
+
+    vars.splits = new Dictionary<string, object[]>() {
+        {"exit_house_any%", new object[] {false, 0, 4, 13, 0}},
+        {"generator", new object[] {false, 0, 16, 16, 1}},
+        {"exit_barrens", new object[] {false, 0, 19, 27, 0}},
+        {"alula", new object[] {false, 0, 40, 38, 2}},
+        {"exit_glen_any%", new object[] {false, 0, 46, 47, 0}},
+        {"enter_elevator_any%", new object[] {false, 0, 48, 22, 0}},
+        {"exit_factory", new object[] {false, 0, 112, 104, 3}},
+        {"redXroom", new object[] {false, -1, -1, -1, -1}}, // redXroom is handled in exit{} but i had to define it here to get rid of errors
+        {"any%_end", new object[] {false, 0, 60, 60, 4}},  
+
+        {"start_ng+", new object[] {false, 20, 1, 1, 5}},
+
+        {"exit_house_ng+", new object[] {false, 20, 4, 13, 0}},
+        {"deep_mines", new object[] {false, 20, 195, 102, 0}},
+        {"enter_glen", new object[] {false, 20, 197, 208, 0}},
+        {"slab_cutscene", new object[] {false, 20, 212, 67, 0}},
+        {"exit_maize", new object[] {false, 20, 203, 202, 6}},
+        {"exit_glen_ng+", new object[] {false, 20, 239, 213, 0}},
+        {"enter_elevator_ng+", new object[] {false, 20, 222, 228, 0}},
+        {"enter_study_room", new object[] {false, 20, 222, 249, 0}},
+        {"ng+_end", new object[] {false, 20, 255, 255, 7}}
+    };
+
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.saveTimeOnStartup = false;
     vars.gameBeaten = false; // for saving tempFrames in the Steam 64-bit IGT version, a separate variable had to be added because pointers can't be used in exit{} and it's better than looking for the file on the hard drive
@@ -88,39 +118,7 @@ init {
     }
 
     switch(modules.First().ModuleMemorySize) {
-        case 0x4AC000:
-            version = "Steam 64-bit IGT";
-
-            vars.done = 0; // did the split get triggered already or not?
-            vars.playthrough_type = 1; // is the split for any% or ng+?
-            vars.oldroom = 2; // old room requirement
-            vars.newroom = 3; // new room requirement
-            vars.specialCondition = 4; // does this split need a separate check?
-
-            vars.splits = new Dictionary<string, object[]>() {
-                {"exit_house_any%", new object[] {false, 0, 4, 13, 0}},
-                {"generator", new object[] {false, 0, 16, 16, 1}},
-                {"exit_barrens", new object[] {false, 0, 19, 27, 0}},
-                {"alula", new object[] {false, 0, 40, 38, 2}},
-                {"exit_glen_any%", new object[] {false, 0, 46, 47, 0}},
-                {"enter_elevator_any%", new object[] {false, 0, 48, 22, 0}},
-                {"exit_factory", new object[] {false, 0, 112, 104, 3}},
-                // redXroom is handled in exit{}
-                {"any%_end", new object[] {false, 0, 60, 60, 4}},  
-
-                {"start_ng+", new object[] {false, 20, 1, 1, 5}},
-
-                {"exit_house_ng+", new object[] {false, 20, 4, 13, 0}},
-                {"deep_mines", new object[] {false, 20, 195, 102, 0}},
-                {"enter_glen", new object[] {false, 20, 197, 208, 0}},
-                {"slab_cutscene", new object[] {false, 20, 212, 67, 0}},
-                {"exit_maize", new object[] {false, 20, 203, 202, 6}},
-                {"exit_glen_ng+", new object[] {false, 20, 239, 213, 0}},
-                {"enter_elevator_ng+", new object[] {false, 20, 222, 228, 0}},
-                {"enter_study_room", new object[] {false, 20, 222, 249, 0}},
-                {"ng+_end", new object[] {false, 20, 255, 255, 7}}
-            };
-            break;
+        case 0x4AC000: version = "Steam 64-bit IGT"; break;
         case 0x271000: version = "Steam 32-bit (Autosplitting not supported)"; break;
         case 0x275000: version = "Standalone (Autosplitting not supported)"; break;
         default: version = "Not Supported"; break;
@@ -205,7 +203,7 @@ exit {
     if(vars.isInRedXRoom && !vars.splits["redXroom"][vars.done] && settings["redXroom"]) {
         vars.TimerModel.Split();
         vars.isInRedXRoom = false;
-	vars.splits["redXroom"][vars.done] = true;
+	    vars.splits["redXroom"][vars.done] = true;
         print("[OneShot] Split redXroom triggered successfully");
     }
 }
