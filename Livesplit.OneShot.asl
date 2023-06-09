@@ -127,7 +127,7 @@ startup
         {"start_ng+",           new object[] {false, 20,  -1,   1, 5}},
         {"exit_house_ng+",      new object[] {false, 20,   4,  13, 0}},
         {"deep_mines",          new object[] {false, 20, 195, 102, 0}},
-        {"enter_glen",          new object[] {false, 20, 197, 208, 0}},
+        {"enter_glen",          new object[] {false, 20,  -1, 208, 0}},
         {"slab_cutscene",       new object[] {false, 20, 212,  67, 0}},
         {"exit_maize",          new object[] {false, 20, 203, 202, 6}},
         {"exit_glen_ng+",       new object[] {false, 20, 239, 213, 0}},
@@ -262,7 +262,7 @@ exit
     {
         vars.TimerModel.Split();
         vars.isInRedXRoom = false;
-	    vars.splits["redXroom"][vars.done] = true;
+	vars.splits["redXroom"][vars.done] = true;
         print("[OneShot] Split redXroom triggered successfully");
     }
     if(vars.gameBeaten && !vars.splits["return"][vars.done] && settings["return"]) 
@@ -279,11 +279,11 @@ onStart
     vars.gameBeaten = false;
     vars.isInRedXRoom = false;
 
-	if(game != null) 
+    if(game != null) 
     {
         foreach(string split in vars.splits.Keys) vars.splits[split][vars.done] = false;
         print("[OneShot] All splits reset");
-	}
+    }
 }
 
 split 
