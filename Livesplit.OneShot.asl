@@ -216,12 +216,7 @@ start
 
 reset 
 {
-    if(current.igtFrames < old.igtFrames && vars.tempFrames == TimeSpan.FromSeconds(0)) 
-    {
-        // avoid the timer resetting when the game closes and the igt is 0 for a moment
-        Thread.Sleep(50);
-        return !game.HasExited && current.room == 1; // can't use the same condition as start{} because current.sound doesn't change for a while so it keeps resetting
-    }
+    return old.sound != current.sound && current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames && vars.tempFrames == TimeSpan.FromSeconds(0);
 }
 
 isLoading 
@@ -316,7 +311,7 @@ split
                         break;
 
                     case 5: // start_ng+
-                        pass = (current.sound == @"Audio/SE/title_decision.wav" && vars.gameBeaten == true);
+                        pass = (current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames && vars.gameBeaten == true);
                         break;
                     case 6: // exit_maize
                         pass = (current.maize_made_bridges == 20);
