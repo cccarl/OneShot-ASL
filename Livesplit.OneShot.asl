@@ -211,7 +211,7 @@ update
 
 start 
 {
-    return current.sound == @"Audio/SE/title_decision.wav" && current.room == 1; // room 1 is the main menu
+    return current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames; // room 1 is the main menu; added the igt check because the same sound plays when you press Exit (and the timer shouldn't start when exiting the game lol)
 }
 
 reset 
