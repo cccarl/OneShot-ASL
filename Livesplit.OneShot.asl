@@ -311,7 +311,7 @@ split
                         break;
 
                     case 5: // start_ng+
-                        pass = (current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames && vars.gameBeaten == true);
+                        pass = (current.sound == @"Audio/SE/title_decision.wav" && current.igtFrames < old.igtFrames && vars.gameBeaten == true);
                         break;
                     case 6: // exit_maize
                         pass = (current.maize_made_bridges == 20);
