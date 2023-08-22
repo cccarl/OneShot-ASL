@@ -85,27 +85,28 @@ startup
     settings.Add("start_ng+", false, "Split for starting NG+ in Solstice runs");
     settings.Add("ng+", false, "New Game+ Splits");
     settings.CurrentDefaultParent = "ng+";
-    settings.Add("exit_house_ng+",     true, "Exit House");
-    settings.Add("deep_mines",         true, "Enter Deep Mines");
-    settings.Add("enter_glen",         true, "Enter Glen");
-    settings.Add("slab_cutscene",      true, "Slab Cutscene");
-    settings.Add("exit_maize",         true, "Exit Maize's room");
-    settings.Add("exit_glen_ng+",      true, "Exit Glen");
-    settings.Add("enter_elevator_ng+", true, "Enter Elevator with Plight");
-    settings.Add("enter_study_room",   true, "Enter Study Room");
-    settings.Add("ng+_end",            true, "Ending");
+    settings.Add("exit_house_ng+",      true, "Exit House");
+    settings.Add("deep_mines",          true, "Enter Deep Mines");
+    settings.Add("enter_glen",          true, "Enter Glen");
+    settings.Add("slab_cutscene",       true, "Slab Cutscene");
+    settings.Add("exit_maize",          true, "Exit Maize's room");
+    settings.Add("exit_glen_ng+",       true, "Exit Glen");
+    settings.Add("enter_elevator_ng+",  true, "Enter Elevator with Plight");
+    settings.Add("enter_study_room",    true, "Enter Study Room");
+    settings.Add("enter_credits_room", false, "Enter Credits Room");
+    settings.Add("ng+_end",             true, "Ending");
     settings.CurrentDefaultParent = null;
 
     settings.Add("achievements", false, "Achievement Splits");
     settings.CurrentDefaultParent = "achievements";
-    settings.Add("shock",             true, "Generator Shock");
-    settings.Add("ram_whisperer",     true, "Ram Whisperer");
-    settings.Add("extreme_bartering", true, "Extreme Bartering");
-    settings.Add("we_ride_at_dawn",   true, "We Ride at Dawn");
-    settings.Add("secret",            true, "Secret (ram room)");
-    settings.Add("bookworm",          true, "Bookworm");
-    settings.Add("pancakes",          true, "Pancakes");
-    settings.Add("return",            true, "Return (game close)");
+    settings.Add("shock",             false, "Generator Shock");
+    settings.Add("ram_whisperer",     false, "Ram Whisperer");
+    settings.Add("extreme_bartering", false, "Extreme Bartering");
+    settings.Add("we_ride_at_dawn",   false, "We Ride at Dawn");
+    settings.Add("secret",             true, "Secret (ram room)");
+    settings.Add("bookworm",          false, "Bookworm");
+    settings.Add("pancakes",          false, "Pancakes");
+    settings.Add("return",             true, "Return (game close)");
 
     vars.done             = 0; // did the split get triggered already or not?
     vars.playthrough_type = 1; // is the split for any% (0) or ng+ (20)?
@@ -133,6 +134,7 @@ startup
         {"exit_glen_ng+",       new object[] {false, 20, 239, 213, 0}},
         {"enter_elevator_ng+",  new object[] {false, 20, 222, 228, 0}},
         {"enter_study_room",    new object[] {false, 20, 222, 249, 0}},
+        {"enter_credits_room",  new object[] {false, 20, 259, 243, 0}},
         {"ng+_end",             new object[] {false, 20,  -1, 255, 7}},
 
         {"shock",               new object[] {false,  0, -1,  16,  8}},
@@ -257,7 +259,7 @@ exit
     {
         vars.TimerModel.Split();
         vars.isInRedXRoom = false;
-	vars.splits["redXroom"][vars.done] = true;
+        vars.splits["redXroom"][vars.done] = true;
         print("[OneShot] Split redXroom triggered successfully");
     }
     if(vars.gameBeaten && !vars.splits["return"][vars.done] && settings["return"]) 
