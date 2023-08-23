@@ -3,6 +3,7 @@ Pointer paths by doesthisusername & NERS
 Script by SunglassesEmoji & NERS
 
 Switches used:
+(2014) 1 - hello?/result/temp
 14 - ramquest finished
 27 - generator on
 64 - kip gave card
@@ -15,15 +16,17 @@ Switches used:
 247 - maize made bridges
 
 Variables used:
+(2014) 1 - func
 12 - alula state
+(2014) 42 - alula state
 */
 
 state("OneShot", "Steam 64-bit IGT") 
 {
-    int igtFrames    : "oneshot.exe",                  0x45E6D0, 0x10, 0x10,  0x1EC;
-    int room         : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58,  0x0,   0x8,  0x18,  0x0;    
-    string32 choicer : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x2A8, 0x0,   0x8,  0x18,  0x38, 0x10, 0x10;
-    string32 sound   : "oneshot.exe",                  0x45E6D0, 0x10, 0x48,  0x40,  0x10, 0x448, 0x10, 0x0,  0x0;
+    int igtFrames    : 0x45E6D0, 0x10, 0x10, 0x1EC;
+    int room         : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58,  0x0, 0x8, 0x18, 0x0;    
+    string32 choicer : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x2A8, 0x0, 0x8, 0x18, 0x38, 0x10, 0x10;
+    string32 sound   : 0x45E6D0, 0x10, 0x48, 0x40, 0x10, 0x448, 0x10, 0x0, 0x0;
 
     int ramquest_finished     : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x70;
     int generator_on          : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0xD8;
@@ -54,16 +57,28 @@ state("OneShot", "Steam 64-bit IGT")
 
 state("OneShot", "Standalone (Autosplitting not supported)") 
 {
-    int igtFrames : "oneshot.exe", 0x236D4C, 0x8, 0x1C, 0x1C8;
+    int igtFrames : 0x236D4C, 0x8, 0x1C, 0x1C8;
 }
 
 state("OneShot", "Steam 32-bit (Autosplitting not supported)") 
 {
-    int igtFrames : "oneshot.exe", 0x23384C, 0x8, 0x1C, 0x1C8;
+    int igtFrames : 0x23384C, 0x8, 0x1C, 0x1C8;
+}
+
+state("RPG_RT", "v1.03 (2014)")
+{
+    int room        : 0xD1F70, 0x4;
+
+    bool hello_temp : 0xD1FF8, 0x20, 0x0;
+
+    int func        : 0xD1FF8, 0x28, 0x0;
+    int alula_state : 0xD1FF8, 0x28, 0xA4;
 }
 
 startup 
 {
+    settings.Add("2016", true, "2016 Version");
+    settings.CurrentDefaultParent = "2016";
     settings.Add("game_time_set", true, "Ask if Game Time should be used when opening the game");
     settings.SetToolTip("game_time_set", "This won't be asked if Game Time is already being used or if the timer is running.");
     settings.Add("use_igt", true, "Use IGT instead of the LiveSplit load remover");
@@ -71,16 +86,16 @@ startup
 
     settings.Add("any%", false, "Any% Splits");
     settings.CurrentDefaultParent = "any%";
-    settings.Add("exit_house_any%",      true, "Exit House");
-    settings.Add("generator",            true, "Generator Powered On");
-    settings.Add("exit_barrens",         true, "Exit Barrens");
-    settings.Add("alula",                true, "Exit Alula's room");
-    settings.Add("exit_glen_any%",       true, "Exit Glen");
-    settings.Add("enter_elevator_any%",  true, "Enter Elevator");
-    settings.Add("exit_factory",         true, "Exit Factory (after getting Kip's card)");
-    settings.Add("redXroom",             true, "Red X Room (game close)");
-    settings.Add("any%_end",             true, "Ending");
-    settings.CurrentDefaultParent = null;
+    settings.Add("exit_house_any%",     true, "Exit House");
+    settings.Add("generator",           true, "Generator Powered On");
+    settings.Add("exit_barrens",        true, "Exit Barrens");
+    settings.Add("alula",               true, "Exit Alula's room");
+    settings.Add("exit_glen_any%",      true, "Exit Glen");
+    settings.Add("enter_elevator_any%", true, "Enter Elevator");
+    settings.Add("exit_factory",        true, "Exit Factory (after getting Kip's card)");
+    settings.Add("redXroom",            true, "Red X Room (game close)");
+    settings.Add("any%_end",            true, "Ending");
+    settings.CurrentDefaultParent = "2016";
 
     settings.Add("start_ng+", false, "Split for starting NG+ in Solstice runs");
     settings.Add("ng+", false, "New Game+ Splits");
@@ -95,7 +110,7 @@ startup
     settings.Add("enter_study_room",    true, "Enter Study Room");
     settings.Add("enter_credits_room", false, "Enter Credits Room");
     settings.Add("ng+_end",             true, "Ending");
-    settings.CurrentDefaultParent = null;
+    settings.CurrentDefaultParent = "2016";
 
     settings.Add("achievements", false, "Achievement Splits");
     settings.CurrentDefaultParent = "achievements";
@@ -107,9 +122,19 @@ startup
     settings.Add("bookworm",          false, "Bookworm");
     settings.Add("pancakes",          false, "Pancakes");
     settings.Add("return",             true, "Return (game close)");
+    settings.CurrentDefaultParent = null;
+
+    settings.Add("2014", false, "2014 Version");
+    settings.CurrentDefaultParent = "2014";
+    settings.Add("2014_exit_house",   true, "Exit House");
+    settings.Add("2014_exit_barrens", true, "Exit Barrens");
+    settings.Add("2014_alula",        true, "Exit Alula's room");
+    settings.Add("2014_exit_glen",    true, "Exit Glen");
+    settings.Add("2014_enter_tower",  true, "Enter Tower");
+    settings.Add("2014_end",          true, "Ending");
 
     vars.done             = 0; // did the split get triggered already or not?
-    vars.playthrough_type = 1; // is the split for any% (0) or ng+ (20)?
+    vars.playthrough_type = 1; // is the split for any%/os14 (0) or ng+ (20)?
     vars.oldroom          = 2; // old room requirement
     vars.newroom          = 3; // new room requirement
     vars.specialCondition = 4; // does this split need a separate check?
@@ -125,26 +150,33 @@ startup
         {"redXroom",            new object[] {false, -1,  -1,  -1, -1}}, // redXroom is handled in exit{} but i had to define it here to get rid of errors
         {"any%_end",            new object[] {false,  0,  -1,  60,  4}},  
 
-        {"start_ng+",           new object[] {false, 20,  -1,   1, 5}},
-        {"exit_house_ng+",      new object[] {false, 20,   4,  13, 0}},
-        {"deep_mines",          new object[] {false, 20, 195, 102, 0}},
-        {"enter_glen",          new object[] {false, 20,  -1, 208, 0}},
-        {"slab_cutscene",       new object[] {false, 20, 212,  67, 0}},
-        {"exit_maize",          new object[] {false, 20, 203, 202, 6}},
-        {"exit_glen_ng+",       new object[] {false, 20, 239, 213, 0}},
-        {"enter_elevator_ng+",  new object[] {false, 20, 222, 228, 0}},
-        {"enter_study_room",    new object[] {false, 20, 222, 249, 0}},
-        {"enter_credits_room",  new object[] {false, 20, 259, 243, 0}},
-        {"ng+_end",             new object[] {false, 20,  -1, 255, 7}},
+        {"start_ng+",           new object[] {false, 20,  -1,   1,  5}},
+        {"exit_house_ng+",      new object[] {false, 20,   4,  13,  0}},
+        {"deep_mines",          new object[] {false, 20, 195, 102,  0}},
+        {"enter_glen",          new object[] {false, 20,  -1, 208,  0}},
+        {"slab_cutscene",       new object[] {false, 20, 212,  67,  0}},
+        {"exit_maize",          new object[] {false, 20, 203, 202,  6}},
+        {"exit_glen_ng+",       new object[] {false, 20, 239, 213,  0}},
+        {"enter_elevator_ng+",  new object[] {false, 20, 222, 228,  0}},
+        {"enter_study_room",    new object[] {false, 20, 222, 249,  0}},
+        {"enter_credits_room",  new object[] {false, 20, 259, 243,  0}},
+        {"ng+_end",             new object[] {false, 20,  -1, 255,  7}},
 
-        {"shock",               new object[] {false,  0, -1,  16,  8}},
-        {"ram_whisperer",       new object[] {false,  0, -1,  29,  9}},
-        {"extreme_bartering",   new object[] {false,  0, -1,  37, 10}},
-        {"we_ride_at_dawn",     new object[] {false,  0, -1, 130, 11}},
-        {"secret",              new object[] {false,  0, 91, 135,  0}},
-        {"bookworm",            new object[] {false,  0, -1,  -1, 12}},
-        {"pancakes",            new object[] {false,  0, -1,  53, 13}},
-        {"return",              new object[] {false, -1, -1,  -1, -1}} // same thing as redXroom
+        {"shock",               new object[] {false,  0, -1,  16,   8}},
+        {"ram_whisperer",       new object[] {false,  0, -1,  29,   9}},
+        {"extreme_bartering",   new object[] {false,  0, -1,  37,  10}},
+        {"we_ride_at_dawn",     new object[] {false,  0, -1, 130,  11}},
+        {"secret",              new object[] {false,  0, 91, 135,   0}},
+        {"bookworm",            new object[] {false,  0, -1,  -1,  12}},
+        {"pancakes",            new object[] {false,  0, -1,  53,  13}},
+        {"return",              new object[] {false, -1, -1,  -1,  -1}}, // same thing as redXroom
+
+        {"2014_exit_house",     new object[] {false,  0,  5,  13,   0}},
+        {"2014_exit_barrens",   new object[] {false,  0, 18,  24,   0}},
+        {"2014_alula",          new object[] {false,  0, 28,  30,  14}},
+        {"2014_exit_glen",      new object[] {false,  0, 46,  35,   0}},
+        {"2014_enter_tower",    new object[] {false,  0, 50,  66,   0}},
+        {"2014_end",            new object[] {false,  0, -1,  60,  15}} 
     };
 
     vars.tempFrames = TimeSpan.FromSeconds(0);
@@ -157,14 +189,23 @@ startup
 init 
 {
     // fix for odd issue where livesplit seems to hook a wrong or broken oneshot process, init{} will be rerun
-    if(modules.First().ModuleMemorySize < 0x200000) 
+    if(modules.First().ModuleMemorySize < 0x99999) 
     {
         print("[OneShot] Reloading script, wrong ModuleMemorySize detected");
         Thread.Sleep(50);
         throw new Exception();
     }
 
-    if(timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase == TimerPhase.NotRunning) 
+    switch(modules.First().ModuleMemorySize) 
+    {
+        case 0x4AC000: version = "Steam 64-bit IGT";                           break;
+        case 0x271000: version = "Steam 32-bit (Autosplitting not supported)"; break;
+        case 0x275000: version = "Standalone (Autosplitting not supported)";   break;
+        case 0xF1000:  version = "v1.03 (2014)";                               break;
+        default:       version = "Not Supported";                              break;
+    }
+
+    if(timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase == TimerPhase.NotRunning && game.ProcessName != "RPG_RT") // for some reason i can't check for the version so i have to check for the process name directly 
     {
         var message = MessageBox.Show
         (
@@ -174,14 +215,6 @@ init
 
         if(message == DialogResult.Yes)
             timer.CurrentTimingMethod = TimingMethod.GameTime;
-    }
-
-    switch(modules.First().ModuleMemorySize) 
-    {
-        case 0x4AC000: version = "Steam 64-bit IGT";                           break;
-        case 0x271000: version = "Steam 32-bit (Autosplitting not supported)"; break;
-        case 0x275000: version = "Standalone (Autosplitting not supported)";   break;
-        default:       version = "Not Supported";                              break;
     }
 
     // if the end game file is not there after it was there when closing the game, the tempFrames will not be reset
@@ -198,75 +231,96 @@ init
 
 update 
 {
-    if(version == "Steam 64-bit IGT") 
+    if(version != "v1.03 (2014)")
     {
-        current.room = (current.room >> 1);
-        if(current.room != old.room) 
+        if(version == "Steam 64-bit IGT") 
         {
-            print("[OneShot] Room changed (" + old.room + " -> " + current.room + ")");
-            if(current.room == 97 && current.beat_the_game_once == 0 && !vars.isInRedXRoom) vars.isInRedXRoom = true;
+            current.room = (current.room >> 1);
+            if(current.room != old.room) 
+            {
+                print("[OneShot 2016] Room changed (" + old.room + " -> " + current.room + ")");
+                if(current.room == 97 && current.beat_the_game_once == 0 && !vars.isInRedXRoom) vars.isInRedXRoom = true;
+            }
+            if(current.sound == @"Audio/SE/title_decision" && vars.gameBeaten == false && current.room == 60) vars.gameBeaten = true;
         }
-        if(current.sound == @"Audio/SE/title_decision" && vars.gameBeaten == false && current.room == 60) vars.gameBeaten = true;
+        vars.gameTime = TimeSpan.FromSeconds(current.igtFrames / 60.0d) + vars.tempFrames;
     }
-    vars.gameTime = TimeSpan.FromSeconds(current.igtFrames / 60.0d) + vars.tempFrames;
+    else if(current.room != old.room) print("[OneShot 2014] Room changed (" + old.room + " -> " + current.room + ")");
 }
 
 start 
 {
-    return current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames; // room 1 is the main menu; added the igt check because the same sound plays when you press Exit (and the timer shouldn't start when exiting the game lol)
+    if(version == "Steam 64-bit IGT") 
+        return current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames; // room 1 is the main menu; added the igt check because the same sound plays when you press Exit (and the timer shouldn't start when exiting the game lol)
+
+    else if(version == "v1.03 (2014)")
+        return !old.hello_temp && current.hello_temp && current.room == 2;
 }
 
 reset 
 {
-    return old.sound != current.sound && current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames && vars.tempFrames == TimeSpan.FromSeconds(0);
+    if(version == "Steam 64-bit IGT") 
+        return old.sound != current.sound && current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames && vars.tempFrames == TimeSpan.FromSeconds(0);
+
+    else if(version == "v1.03 (2014)")
+        return !old.hello_temp && current.hello_temp && current.room == 2;
 }
 
 isLoading 
 {
-    if(settings["use_igt"]) return true;
-    else if(timer.IsGameTimePaused && current.igtFrames != 0) return false;
+    if(version != "v1.03 (2014)")
+    {
+        if(settings["use_igt"]) return true;
+        else if(timer.IsGameTimePaused && current.igtFrames != 0) return false;
+    }
 }
 
 gameTime 
 {
-    // for the first 15s the timer is always set, once 15s have passed it will not jump back to much smaller values, this prevents livesplit from showing 0.xx when opening the game
-    // also adds the temp frames for solstice runs
-    if(settings["use_igt"] && ((timer.CurrentTime.GameTime > TimeSpan.FromSeconds(14) + vars.tempFrames && vars.gameTime > TimeSpan.FromSeconds(14) + vars.tempFrames) || timer.CurrentTime.GameTime < TimeSpan.FromSeconds(15) + vars.tempFrames))
-        return vars.gameTime;
+    if(version != "v1.03 (2014)")
+    {
+        // for the first 15s the timer is always set, once 15s have passed it will not jump back to much smaller values, this prevents livesplit from showing 0.xx when opening the game
+        // also adds the temp frames for solstice runs
+        if(settings["use_igt"] && ((timer.CurrentTime.GameTime > TimeSpan.FromSeconds(14) + vars.tempFrames && vars.gameTime > TimeSpan.FromSeconds(14) + vars.tempFrames) || timer.CurrentTime.GameTime < TimeSpan.FromSeconds(15) + vars.tempFrames))
+            return vars.gameTime;
+    }
 }
 
 exit 
 {
-    timer.IsGameTimePaused = true;
-
-    // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later
-    // not needed for the Steam 64-bit IGT version
-    if(vars.tempFrames == TimeSpan.FromSeconds(0)) 
+    if(version != "v1.03 (2014)")
     {
-        if(version != "Steam 64-bit IGT") 
+        timer.IsGameTimePaused = true;
+
+        // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later
+        // not needed for the Steam 64-bit IGT version
+        if(vars.tempFrames == TimeSpan.FromSeconds(0)) 
         {
-            if(File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) 
+            if(version != "Steam 64-bit IGT") 
             {
-                vars.saveTimeOnStartup = true;
-                vars.tempFrames = timer.CurrentTime.GameTime;
+                if(File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) 
+                {
+                    vars.saveTimeOnStartup = true;
+                    vars.tempFrames = timer.CurrentTime.GameTime;
+                }
             }
+            else if(vars.gameBeaten)
+                vars.tempFrames = timer.CurrentTime.GameTime;
         }
-        else if(vars.gameBeaten)
-            vars.tempFrames = timer.CurrentTime.GameTime;
-    }
 
-    if(vars.isInRedXRoom && !vars.splits["redXroom"][vars.done] && settings["redXroom"]) 
-    {
-        vars.TimerModel.Split();
-        vars.isInRedXRoom = false;
-        vars.splits["redXroom"][vars.done] = true;
-        print("[OneShot] Split redXroom triggered successfully");
-    }
-    if(vars.gameBeaten && !vars.splits["return"][vars.done] && settings["return"]) 
-    {
-        vars.TimerModel.Split();
-        vars.splits["return"][vars.done] = true;
-        print("[OneShot] Split return triggered successfully");    
+        if(vars.isInRedXRoom && !vars.splits["redXroom"][vars.done] && settings["redXroom"]) 
+        {
+            vars.TimerModel.Split();
+            vars.isInRedXRoom = false;
+            vars.splits["redXroom"][vars.done] = true;
+            print("[OneShot] Split redXroom triggered successfully");
+        }
+        if(vars.gameBeaten && !vars.splits["return"][vars.done] && settings["return"]) 
+        {
+            vars.TimerModel.Split();
+            vars.splits["return"][vars.done] = true;
+            print("[OneShot] Split return triggered successfully");    
+        }
     }
 }
 
@@ -345,7 +399,40 @@ split
                 if(pass) 
                 {
                     vars.splits[name][vars.done] = true;
-                    print("[OneShot] Split " + name + " triggered successfully");
+                    print("[OneShot 2016] Split " + name + " triggered successfully");
+                    return true;
+                }
+            }
+        }
+    }
+
+    else if(version == "v1.03 (2014)") // i really couldn't think of a better way to handle both versions lol but this works i suppose
+    {
+        foreach(string name in vars.splits.Keys) 
+        {
+            if(!name.StartsWith("2014")) continue;
+            if(settings[name] && !vars.splits[name][vars.done]) 
+            {
+                if(vars.splits[name][vars.oldroom] != -1 && old.room != vars.splits[name][vars.oldroom]) continue;
+                if(vars.splits[name][vars.newroom] != -1 && current.room != vars.splits[name][vars.newroom]) continue;
+
+                bool pass = true;
+                int condition = vars.splits[name][vars.specialCondition];
+                switch(condition) 
+                {
+                    case 14: // 2014_alula
+                        pass = (current.alula_state == 4);
+                        break;
+
+                    case 15: // 2014_end
+                        pass = (current.func == 12);
+                        break;
+                }
+
+                if(pass) 
+                {
+                    vars.splits[name][vars.done] = true;
+                    print("[OneShot 2014] Split " + name + " triggered successfully");
                     return true;
                 }
             }
