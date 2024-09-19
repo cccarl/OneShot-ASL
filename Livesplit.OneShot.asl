@@ -23,10 +23,11 @@ Variables used:
 
 state("OneShot", "Steam 64-bit IGT") 
 {
-    int igtFrames    : 0x45E6D0, 0x10, 0x10, 0x1EC;
-    int room         : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58,  0x0, 0x8, 0x18, 0x0;    
-    string32 choicer : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x2A8, 0x0, 0x8, 0x18, 0x38, 0x10, 0x10;
-    string32 sound   : 0x45E6D0, 0x10, 0x48, 0x40, 0x10, 0x448, 0x10, 0x0, 0x0;
+    int igtFrames  : 0x45E6D0, 0x10, 0x10, 0x1EC;
+    int room       : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x58,  0x0, 0x8, 0x18, 0x0;   
+    int eventID    : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x6B8, 0x0, 0x8, 0x18, 0x0, 0x18, 0x18;
+    int eventLine  : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x6B8, 0x0, 0x8, 0x18, 0x0, 0x18, 0x60;
+    string32 sound : 0x45E6D0, 0x10, 0x48, 0x40, 0x10, 0x448, 0x10, 0x0, 0x0;
 
     int ramquest_finished     : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x70;
     int generator_on          : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0xD8;
@@ -181,7 +182,8 @@ startup
 
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.saveTimeOnStartup = false;
-    vars.gameBeaten = false; // for saving tempFrames in the Steam 64-bit IGT version & the Return achievement, a separate variable had to be added because pointers can't be used in exit{} and it's better than looking for the file on the hard drive
+    vars.gameBeaten = false;
+    vars.returnACHV = false;
     vars.isInRedXRoom = false;
     vars.TimerModel = new TimerModel { CurrentState = timer };
 }
@@ -205,12 +207,12 @@ init
         default:       version = "Not Supported";                              break;
     }
 
-    if(timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase == TimerPhase.NotRunning && game.ProcessName != "RPG_RT") // for some reason i can't check for the version so i have to check for the process name directly 
+    if(timer.CurrentTimingMethod == TimingMethod.RealTime && settings["game_time_set"] && timer.CurrentPhase == TimerPhase.NotRunning && game.ProcessName != "RPG_RT")
     {
         var message = MessageBox.Show
         (
             "LiveSplit uses a Load Remover for this game. Would you like to change the current timing method to Game Time instead of Real Time?",
-            "LiveSplit | OneShot Load Remover", MessageBoxButtons.YesNo, MessageBoxIcon.Question
+            "LiveSplit | OneShot", MessageBoxButtons.YesNo, MessageBoxIcon.Question
         );
 
         if(message == DialogResult.Yes)
@@ -218,10 +220,9 @@ init
     }
 
     // if the end game file is not there after it was there when closing the game, the tempFrames will not be reset
-    // the Steam 64-bit IGT version has a pointer for the playthrough type so this is not needed in that case
-    if(version != "Steam 64-bit IGT" && vars.saveTimeOnStartup)
+    if(vars.saveTimeOnStartup)
     {
-        // if the file still exists -> undo tempframes
+        // if the file still exists, undo tempFrames
         if(File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot"))
             vars.tempFrames = TimeSpan.FromSeconds(0);
 
@@ -236,34 +237,63 @@ update
         if(version == "Steam 64-bit IGT") 
         {
             current.room = (current.room >> 1);
+            current.eventID = (current.eventID >> 1);
+            current.eventLine = (current.eventLine >> 1);
+
             if(current.room != old.room) 
             {
+                if(current.room == 97 && current.beat_the_game_once == 0 && vars.isInRedXRoom == false) 
+                    vars.isInRedXRoom = true;
+                
                 print("[OneShot 2016] Room changed (" + old.room + " -> " + current.room + ")");
-                if(current.room == 97 && current.beat_the_game_once == 0 && !vars.isInRedXRoom) vars.isInRedXRoom = true;
             }
-            if(current.sound == @"Audio/SE/title_decision" && vars.gameBeaten == false && current.room == 60) vars.gameBeaten = true;
+
+            if(current.room == 60 && current.eventID == 12)
+            {
+                if(current.eventLine > 57 && current.eventLine < 220 && vars.gameBeaten == false) 
+                    vars.gameBeaten = true;
+
+                // ending event (sun)
+                else if(current.eventLine > 170 && current.eventLine < 180 && vars.returnACHV == false) 
+                    vars.returnACHV = true;
+
+                else if(current.eventLine > 189 && current.eventLine < 196 && vars.saveTimeOnStartup == false) // after the file is deleted the game jumps to these lines
+                    vars.saveTimeOnStartup = true;
+            }
+
+            else if(current.room == 61 && current.eventID == 3) 
+            {
+                // ending event (home)
+                if(current.eventLine > 110 && current.eventLine < 113 && vars.returnACHV == false) 
+                    vars.returnACHV = true;
+
+                else if(current.eventLine > 124 && current.eventLine < 814 && vars.saveTimeOnStartup == false)
+                    vars.saveTimeOnStartup = true;                
+            }
         }
         vars.gameTime = TimeSpan.FromSeconds(current.igtFrames / 60.0d) + vars.tempFrames;
     }
-    else if(current.room != old.room) print("[OneShot 2014] Room changed (" + old.room + " -> " + current.room + ")");
+    else if(current.room != old.room) 
+        print("[OneShot 2014] Room changed (" + old.room + " -> " + current.room + ")");
 }
 
 start 
 {
     if(version == "Steam 64-bit IGT") 
-        return current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames; // room 1 is the main menu; added the igt check because the same sound plays when you press Exit (and the timer shouldn't start when exiting the game lol)
+        return (current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames); 
+        // room 1 is the main menu; added the igt check because the same sound plays when you press Exit
 
     else if(version == "v1.03 (2014)")
-        return !old.hello_temp && current.hello_temp && current.room == 2;
+        return (!old.hello_temp && current.hello_temp && current.room == 2);
 }
 
 reset 
 {
     if(version == "Steam 64-bit IGT") 
-        return old.sound != current.sound && current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames && vars.tempFrames == TimeSpan.FromSeconds(0);
+        return (old.sound != current.sound && current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames && vars.tempFrames == TimeSpan.FromSeconds(0));
 
     else if(version == "v1.03 (2014)")
-        return !old.hello_temp && current.hello_temp && current.room == 2;
+        return (!old.hello_temp && current.hello_temp && current.room == 2);
 }
 
 isLoading 
@@ -292,20 +322,23 @@ exit
     {
         timer.IsGameTimePaused = true;
 
-        // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later
-        // not needed for the Steam 64-bit IGT version
         if(vars.tempFrames == TimeSpan.FromSeconds(0)) 
         {
-            if(version != "Steam 64-bit IGT") 
+            if(version != "Steam 64-bit IGT")
             {
+                // find the file that indicates that the game has been beaten to save the current IGT and add it up to a new IGT in a new save file later
                 if(File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\My Games\Oneshot\save_progress.oneshot")) 
                 {
                     vars.saveTimeOnStartup = true;
                     vars.tempFrames = timer.CurrentTime.GameTime;
                 }
             }
-            else if(vars.gameBeaten)
+
+            else if(vars.saveTimeOnStartup)
+            {
+                vars.saveTimeOnStartup = false;
                 vars.tempFrames = timer.CurrentTime.GameTime;
+            }
         }
 
         if(vars.isInRedXRoom && !vars.splits["redXroom"][vars.done] && settings["redXroom"]) 
@@ -313,13 +346,14 @@ exit
             vars.TimerModel.Split();
             vars.isInRedXRoom = false;
             vars.splits["redXroom"][vars.done] = true;
-            print("[OneShot] Split redXroom triggered successfully");
+            print("[OneShot 2016] Split redXroom triggered successfully");
         }
-        if(vars.gameBeaten && !vars.splits["return"][vars.done] && settings["return"]) 
+
+        if(vars.returnACHV && !vars.splits["return"][vars.done] && settings["return"]) 
         {
             vars.TimerModel.Split();
             vars.splits["return"][vars.done] = true;
-            print("[OneShot] Split return triggered successfully");    
+            print("[OneShot 2016] Split return triggered successfully");    
         }
     }
 }
@@ -328,11 +362,14 @@ onStart
 {
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.gameBeaten = false;
+    vars.returnACHV = false;
     vars.isInRedXRoom = false;
 
     if(game != null) 
     {
-        foreach(string split in vars.splits.Keys) vars.splits[split][vars.done] = false;
+        foreach(string split in vars.splits.Keys) 
+            vars.splits[split][vars.done] = false;
+
         print("[OneShot] All splits reset");
     }
 }
@@ -343,6 +380,7 @@ split
     {
         foreach(string name in vars.splits.Keys) 
         {
+            if(name.StartsWith("2014")) continue;
             if(settings[name] && !vars.splits[name][vars.done]) 
             {
                 if(current.beat_the_game_once != vars.splits[name][vars.playthrough_type]) continue;
@@ -363,7 +401,7 @@ split
                         pass = (current.kip_gave_card == 20);
                         break;
                     case 4: // any%_end
-                        pass = (current.sound == @"Audio/SE/title_decision");
+                        pass = (current.eventID == 12 && current.eventLine > 57 && current.eventLine < 220);
                         break;
 
                     case 5: // start_ng+
@@ -373,7 +411,7 @@ split
                         pass = (current.maize_made_bridges == 20);
                         break;
                     case 7: // ng+_end
-                        pass = (old.choicer == @"Goodbye, Niko." && current.choicer != @"Goodbye, Niko.");
+                        pass = (current.eventID == 3 && current.eventLine > 152);
                         break;
 
                     case 8: // shock
@@ -406,7 +444,7 @@ split
         }
     }
 
-    else if(version == "v1.03 (2014)") // i really couldn't think of a better way to handle both versions lol but this works i suppose
+    else if(version == "v1.03 (2014)")
     {
         foreach(string name in vars.splits.Keys) 
         {
