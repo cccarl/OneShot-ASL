@@ -237,6 +237,9 @@ init
 
 update 
 {
+    if(version == "Not Supported")
+        return false;
+
     if(version != "v1.03 (2014)")
     {
         if(version == "Steam 64-bit IGT") 
@@ -391,3 +394,4 @@ split
         return true;
     }
 }
+
