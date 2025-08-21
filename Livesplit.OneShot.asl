@@ -29,31 +29,31 @@ state("OneShot", "Steam 64-bit IGT")
     int eventLine  : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x6B8, 0x0, 0x8, 0x18, 0x0, 0x18, 0x60;
     string32 sound : 0x45E6D0, 0x10, 0x48, 0x40, 0x10, 0x448, 0x10, 0x0, 0x0;
 
-    int ramquest_finished     : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x70;
-    int generator_on          : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0xD8;
-    int kip_gave_card         : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x200;
-    int ate_pancakes          : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x260;
-    int roomba                : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x278;
-    int trade1                : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x3F0;
-    int trade2                : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x3F8;
-    int trade3                : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x400;
-    int trade4                : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x408;
-    int trade5                : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x410;
-    int trade6                : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x418;
-    int trade7                : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x420;
-    int trade8                : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x428;
-    int reset_ram_puzzle_once : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x430;
-    int book1                 : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x438;
-    int book2                 : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x440;
-    int book3                 : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x448;
-    int book4                 : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x450;
-    int book5                 : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x458;
-    int book6                 : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x460;
-    int book7                 : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x468;
-    int beat_the_game_once    : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x4C0;
-    int maize_made_bridges    : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x7B8;
+    int ramquestFinished   : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x70;
+    int generatorOn        : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0xD8;
+    int kipGaveCard        : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x200;
+    int atePancakes        : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x260;
+    int roomba             : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x278;
+    int trade1             : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x3F0;
+    int trade2             : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x3F8;
+    int trade3             : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x400;
+    int trade4             : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x408;
+    int trade5             : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x410;
+    int trade6             : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x418;
+    int trade7             : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x420;
+    int trade8             : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x428;
+    int resetRamPuzzleOnce : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x430;
+    int book1              : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x438;
+    int book2              : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x440;
+    int book3              : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x448;
+    int book4              : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x450;
+    int book5              : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x458;
+    int book6              : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x460;
+    int book7              : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x468;
+    int beatTheGameOnce    : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x4C0;
+    int maizeMadeBridges   : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x228, 0x0, 0x8, 0x10, 0x20, 0x7B8;
 
-    int alula_state : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x398, 0x0, 0x8, 0x10, 0x20, 0x60;
+    int alulaState : "x64-vcruntime140-ruby250.dll", 0x20B0C0, 0x10, 0x398, 0x0, 0x8, 0x10, 0x20, 0x60;
 }
 
 state("OneShot", "Standalone (Autosplitting not supported)") 
@@ -68,12 +68,12 @@ state("OneShot", "Steam 32-bit (Autosplitting not supported)")
 
 state("RPG_RT", "v1.03 (2014)")
 {
-    int room        : 0xD1F70, 0x4;
+    int room : 0xD1F70, 0x4;
 
-    bool hello_temp : 0xD1FF8, 0x20, 0x0;
+    bool helloTemp : 0xD1FF8, 0x20, 0x0;
 
-    int func        : 0xD1FF8, 0x28, 0x0;
-    int alula_state : 0xD1FF8, 0x28, 0xA4;
+    int func       : 0xD1FF8, 0x28, 0x0;
+    int alulaState : 0xD1FF8, 0x28, 0xA4;
 }
 
 startup 
@@ -134,58 +134,13 @@ startup
     settings.Add("2014_enter_tower",  true, "Enter Tower");
     settings.Add("2014_end",          true, "Ending");
 
-    vars.done             = 0; // did the split get triggered already or not?
-    vars.playthrough_type = 1; // is the split for any%/os14 (0) or ng+ (20)?
-    vars.oldroom          = 2; // old room requirement
-    vars.newroom          = 3; // new room requirement
-    vars.specialCondition = 4; // does this split need a separate check?
-    vars.splits = new Dictionary<string, object[]>() 
-    {
-        {"exit_house_any%",     new object[] {false,  0,   4,  13,  0}},
-        {"generator",           new object[] {false,  0,  -1,  16,  1}},
-        {"exit_barrens",        new object[] {false,  0,  19,  27,  0}},
-        {"alula",               new object[] {false,  0,  40,  38,  2}},
-        {"exit_glen_any%",      new object[] {false,  0,  46,  47,  0}},
-        {"enter_elevator_any%", new object[] {false,  0,  48,  22,  0}},
-        {"exit_factory",        new object[] {false,  0, 112, 104,  3}},
-        {"redXroom",            new object[] {false, -1,  -1,  -1, -1}}, // redXroom is handled in exit{} but i had to define it here to get rid of errors
-        {"any%_end",            new object[] {false,  0,  -1,  60,  4}},  
-
-        {"start_ng+",           new object[] {false, 20,  -1,   1,  5}},
-        {"exit_house_ng+",      new object[] {false, 20,   4,  13,  0}},
-        {"deep_mines",          new object[] {false, 20, 195, 102,  0}},
-        {"enter_glen",          new object[] {false, 20,  -1, 208,  0}},
-        {"slab_cutscene",       new object[] {false, 20, 212,  67,  0}},
-        {"exit_maize",          new object[] {false, 20, 203, 202,  6}},
-        {"exit_glen_ng+",       new object[] {false, 20, 239, 213,  0}},
-        {"enter_elevator_ng+",  new object[] {false, 20, 222, 228,  0}},
-        {"enter_study_room",    new object[] {false, 20, 222, 249,  0}},
-        {"enter_credits_room",  new object[] {false, 20, 259, 243,  0}},
-        {"ng+_end",             new object[] {false, 20,  -1, 255,  7}},
-
-        {"shock",               new object[] {false,  0, -1,  16,   8}},
-        {"ram_whisperer",       new object[] {false,  0, -1,  29,   9}},
-        {"extreme_bartering",   new object[] {false,  0, -1,  37,  10}},
-        {"we_ride_at_dawn",     new object[] {false,  0, -1, 130,  11}},
-        {"secret",              new object[] {false,  0, 91, 135,   0}},
-        {"bookworm",            new object[] {false,  0, -1,  -1,  12}},
-        {"pancakes",            new object[] {false,  0, -1,  53,  13}},
-        {"return",              new object[] {false, -1, -1,  -1,  -1}}, // same thing as redXroom
-
-        {"2014_exit_house",     new object[] {false,  0,  5,  13,   0}},
-        {"2014_exit_barrens",   new object[] {false,  0, 18,  24,   0}},
-        {"2014_alula",          new object[] {false,  0, 28,  30,  14}},
-        {"2014_exit_glen",      new object[] {false,  0, 46,  35,   0}},
-        {"2014_enter_tower",    new object[] {false,  0, 50,  66,   0}},
-        {"2014_end",            new object[] {false,  0, -1,  60,  15}} 
-    };
-
     vars.tempFrames = TimeSpan.FromSeconds(0);
     vars.saveTimeOnStartup = false;
     vars.gameBeaten = false;
     vars.returnACHV = false;
     vars.isInRedXRoom = false;
-    vars.TimerModel = new TimerModel { CurrentState = timer };
+    vars.completedSplits = new HashSet<string>();
+    vars.timerModel = new TimerModel { CurrentState = timer };
 }
 
 init 
@@ -200,10 +155,60 @@ init
 
     switch(modules.First().ModuleMemorySize) 
     {
-        case 0x4AC000: version = "Steam 64-bit IGT";                           break;
+        case 0x4AC000:
+            version = "Steam 64-bit IGT";
+
+            vars.splits = new Dictionary<string, Func<dynamic, dynamic, bool>>()
+            {
+                // org = original (equivalent to old), cur = current (can't use the same names)
+                // redXroom and return are manually handled in exit{} since we want those to happen when the game CLOSES, and split{} doesn't run if the game isn't open
+                {"exit_house_any%",     (org, cur) => cur.beatTheGameOnce == 0 && org.room == 4 && cur.room == 13},
+                {"generator",           (org, cur) => cur.beatTheGameOnce == 0 && cur.room == 16 && org.generatorOn != 20 && cur.generatorOn == 20},
+                {"exit_barrens",        (org, cur) => cur.beatTheGameOnce == 0 && org.room == 19 && cur.room == 27},
+                {"alula",               (org, cur) => cur.beatTheGameOnce == 0 && org.room == 40 && cur.room == 38 && cur.alulaState == 9},
+                {"exit_glen_any%",      (org, cur) => cur.beatTheGameOnce == 0 && org.room == 46 && cur.room == 47},
+                {"enter_elevator_any%", (org, cur) => cur.beatTheGameOnce == 0 && org.room == 48 && cur.room == 22},
+                {"exit_factory",        (org, cur) => cur.beatTheGameOnce == 0 && org.room == 112 && cur.room == 104 && cur.kipGaveCard == 20},
+                {"any%_end",            (org, cur) => cur.beatTheGameOnce == 0 && cur.room == 60 && cur.eventID == 12 && org.eventLine < 58 && cur.eventLine >= 58 && cur.eventLine < 220},  
+
+                {"start_ng+",          (org, cur) => cur.beatTheGameOnce == 20 && cur.room == 1 && cur.sound == @"Audio/SE/title_decision.wav" && cur.igtFrames < org.igtFrames && vars.gameBeaten},
+                {"exit_house_ng+",     (org, cur) => cur.beatTheGameOnce == 20 && org.room == 4 && cur.room == 13},
+                {"deep_mines",         (org, cur) => cur.beatTheGameOnce == 20 && org.room == 195 && cur.room == 102},
+                {"enter_glen",         (org, cur) => cur.beatTheGameOnce == 20 && org.room != 208 && cur.room == 208},
+                {"slab_cutscene",      (org, cur) => cur.beatTheGameOnce == 20 && org.room == 212 && cur.room == 67},
+                {"exit_maize",         (org, cur) => cur.beatTheGameOnce == 20 && org.room == 203 && cur.room == 202 && cur.maizeMadeBridges == 20},
+                {"exit_glen_ng+",      (org, cur) => cur.beatTheGameOnce == 20 && org.room == 239 && cur.room == 213},
+                {"enter_elevator_ng+", (org, cur) => cur.beatTheGameOnce == 20 && org.room == 222 && cur.room == 228},
+                {"enter_study_room",   (org, cur) => cur.beatTheGameOnce == 20 && org.room == 222 && cur.room == 249},
+                {"enter_credits_room", (org, cur) => cur.beatTheGameOnce == 20 && org.room == 259 && cur.room == 243},
+                {"ng+_end",            (org, cur) => cur.beatTheGameOnce == 20 && cur.room == 255 && cur.eventID == 3 && org.eventLine < 153 && cur.eventLine >= 153},
+
+                {"shock",             (org, cur) => cur.beatTheGameOnce == 0 && cur.room == 16 && org.sound != null && cur.sound == null},
+                {"ram_whisperer",     (org, cur) => cur.beatTheGameOnce == 0 && cur.room == 29 && org.ramquestFinished != 20 && cur.ramquestFinished == 20 && cur.resetRamPuzzleOnce != 20},
+                {"extreme_bartering", (org, cur) => cur.beatTheGameOnce == 0 && cur.room == 37 && cur.trade1 == 20 && cur.trade2 == 20 && cur.trade3 == 20 && cur.trade4 == 20 && cur.trade5 == 20 && cur.trade6 == 20 && cur.trade7 == 20 && cur.trade8 == 20},
+                {"we_ride_at_dawn",   (org, cur) => cur.beatTheGameOnce == 0 && cur.room == 130 && org.roomba == 20 && cur.roomba == 0},
+                {"secret",            (org, cur) => cur.beatTheGameOnce == 0 && org.room == 91 && cur.room == 135},
+                {"bookworm",          (org, cur) => cur.beatTheGameOnce == 0 && cur.book1 == 20 && cur.book2 == 20 && cur.book3 == 20 && cur.book4 == 20 && cur.book5 == 20 && cur.book6 == 20 && cur.book7 == 20},
+                {"pancakes",          (org, cur) => cur.beatTheGameOnce == 0 && cur.room == 53 && org.atePancakes != 20 && cur.atePancakes == 20}
+            };
+            break;
+        
+        case 0xF1000:
+            version = "v1.03 (2014)";
+
+            vars.splits = new Dictionary<string, Func<dynamic, dynamic, bool>>()
+            {
+                {"2014_exit_house",   (org, cur) => org.room == 5 && cur.room == 13},
+                {"2014_exit_barrens", (org, cur) => org.room == 18 && cur.room == 24},
+                {"2014_alula",        (org, cur) => org.room == 28 && cur.room == 30 && cur.alulaState == 4},
+                {"2014_exit_glen",    (org, cur) => org.room == 46 && cur.room == 35},
+                {"2014_enter_tower",  (org, cur) => org.room == 50 && cur.room == 66},
+                {"2014_end",          (org, cur) => cur.room == 60 && org.func != 12 && cur.func == 12}
+            };
+            break;
+        
         case 0x271000: version = "Steam 32-bit (Autosplitting not supported)"; break;
         case 0x275000: version = "Standalone (Autosplitting not supported)";   break;
-        case 0xF1000:  version = "v1.03 (2014)";                               break;
         default:       version = "Not Supported";                              break;
     }
 
@@ -242,7 +247,7 @@ update
 
             if(current.room != old.room) 
             {
-                if(current.room == 97 && current.beat_the_game_once == 0 && vars.isInRedXRoom == false) 
+                if(current.room == 97 && current.beatTheGameOnce == 0 && vars.isInRedXRoom == false) 
                     vars.isInRedXRoom = true;
                 
                 print("[OneShot 2016] Room changed (" + old.room + " -> " + current.room + ")");
@@ -284,7 +289,7 @@ start
         // room 1 is the main menu; added the igt check because the same sound plays when you press Exit
 
     else if(version == "v1.03 (2014)")
-        return (!old.hello_temp && current.hello_temp && current.room == 2);
+        return (!old.helloTemp && current.helloTemp && current.room == 2);
 }
 
 reset 
@@ -293,7 +298,7 @@ reset
         return (old.sound != current.sound && current.sound == @"Audio/SE/title_decision.wav" && current.room == 1 && current.igtFrames < old.igtFrames && vars.tempFrames == TimeSpan.FromSeconds(0));
 
     else if(version == "v1.03 (2014)")
-        return (!old.hello_temp && current.hello_temp && current.room == 2);
+        return (!old.helloTemp && current.helloTemp && current.room == 2);
 }
 
 isLoading 
@@ -341,19 +346,20 @@ exit
             }
         }
 
-        if(vars.isInRedXRoom && !vars.splits["redXroom"][vars.done] && settings["redXroom"]) 
+        if(vars.isInRedXRoom && settings["redXroom"] && !vars.completedSplits.Contains("redXroom")) 
         {
-            vars.TimerModel.Split();
+            vars.timerModel.Split();
             vars.isInRedXRoom = false;
-            vars.splits["redXroom"][vars.done] = true;
-            print("[OneShot 2016] Split redXroom triggered successfully");
+            vars.completedSplits.Add("redXroom");
+            print("[OneShot] Split triggered (redXroom)");
         }
 
-        if(vars.returnACHV && !vars.splits["return"][vars.done] && settings["return"]) 
+        if(vars.returnACHV && settings["return"] && !vars.completedSplits.Contains("return")) 
         {
-            vars.TimerModel.Split();
-            vars.splits["return"][vars.done] = true;
-            print("[OneShot 2016] Split return triggered successfully");    
+            vars.timerModel.Split();
+            vars.returnACHV = false;
+            vars.completedSplits.Add("return");
+            print("[OneShot] Split triggered (return)");    
         }
     }
 }
@@ -364,116 +370,24 @@ onStart
     vars.gameBeaten = false;
     vars.returnACHV = false;
     vars.isInRedXRoom = false;
-
-    if(game != null) 
-    {
-        foreach(string split in vars.splits.Keys) 
-            vars.splits[split][vars.done] = false;
-
-        print("[OneShot] All splits reset");
-    }
 }
 
-split 
+onReset
 {
-    if(version == "Steam 64-bit IGT") 
+    vars.completedSplits.Clear();
+    print("[OneShot] All splits have been reset to initial state");
+}
+
+split
+{
+    foreach(var split in vars.splits)
     {
-        foreach(string name in vars.splits.Keys) 
-        {
-            if(name.StartsWith("2014")) continue;
-            if(settings[name] && !vars.splits[name][vars.done]) 
-            {
-                if(current.beat_the_game_once != vars.splits[name][vars.playthrough_type]) continue;
-                if(vars.splits[name][vars.oldroom] != -1 && old.room != vars.splits[name][vars.oldroom]) continue;
-                if(vars.splits[name][vars.newroom] != -1 && current.room != vars.splits[name][vars.newroom]) continue;
+        if(!settings[split.Key] || 
+           vars.completedSplits.Contains(split.Key) ||
+           !split.Value(old, current)) continue;
 
-                bool pass = true;
-                int condition = vars.splits[name][vars.specialCondition];
-                switch(condition) 
-                {
-                    case 1: // generator
-                        pass = (current.generator_on == 20);
-                        break;
-                    case 2: // alula
-                        pass = (current.alula_state == 9);
-                        break;
-                    case 3: // exit_factory
-                        pass = (current.kip_gave_card == 20);
-                        break;
-                    case 4: // any%_end
-                        pass = (current.eventID == 12 && current.eventLine > 57 && current.eventLine < 220);
-                        break;
-
-                    case 5: // start_ng+
-                        pass = (current.sound == @"Audio/SE/title_decision.wav" && current.igtFrames < old.igtFrames && vars.gameBeaten == true);
-                        break;
-                    case 6: // exit_maize
-                        pass = (current.maize_made_bridges == 20);
-                        break;
-                    case 7: // ng+_end
-                        pass = (current.eventID == 3 && current.eventLine > 152);
-                        break;
-
-                    case 8: // shock
-                        pass = (old.sound != null && current.sound == null);
-                        break;
-                    case 9: // ram_whisperer
-                        pass = (current.ramquest_finished == 20 && (current.reset_ram_puzzle_once == 0 || current.reset_ram_puzzle_once == 8));
-                        break;
-                    case 10: // extreme_bartering
-                        pass = (current.trade1 == 20 && current.trade2 == 20 && current.trade3 == 20 && current.trade4 == 20 && current.trade5 == 20 && current.trade6 == 20 && current.trade7 == 20 && current.trade8 == 20);
-                        break;
-                    case 11: // we_ride_at_dawn
-                        pass = (old.roomba == 20 && current.roomba == 0);
-                        break;
-                    case 12: // bookworm
-                        pass = (current.book1 == 20 && current.book2 == 20 && current.book3 == 20 && current.book4 == 20 && current.book5 == 20 && current.book6 == 20 && current.book7 == 20);
-                        break;
-                    case 13: // pancakes
-                        pass = (current.ate_pancakes == 20);
-                        break;
-                }
-
-                if(pass) 
-                {
-                    vars.splits[name][vars.done] = true;
-                    print("[OneShot 2016] Split " + name + " triggered successfully");
-                    return true;
-                }
-            }
-        }
-    }
-
-    else if(version == "v1.03 (2014)")
-    {
-        foreach(string name in vars.splits.Keys) 
-        {
-            if(!name.StartsWith("2014")) continue;
-            if(settings[name] && !vars.splits[name][vars.done]) 
-            {
-                if(vars.splits[name][vars.oldroom] != -1 && old.room != vars.splits[name][vars.oldroom]) continue;
-                if(vars.splits[name][vars.newroom] != -1 && current.room != vars.splits[name][vars.newroom]) continue;
-
-                bool pass = true;
-                int condition = vars.splits[name][vars.specialCondition];
-                switch(condition) 
-                {
-                    case 14: // 2014_alula
-                        pass = (current.alula_state == 4);
-                        break;
-
-                    case 15: // 2014_end
-                        pass = (current.func == 12);
-                        break;
-                }
-
-                if(pass) 
-                {
-                    vars.splits[name][vars.done] = true;
-                    print("[OneShot 2014] Split " + name + " triggered successfully");
-                    return true;
-                }
-            }
-        }
+        vars.completedSplits.Add(split.Key);
+        print("[OneShot] Split triggered (" + split.Key + ")");
+        return true;
     }
 }
